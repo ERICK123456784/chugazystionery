@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHUGAZY STATIONERY</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/mobile.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="CHUGAZY STATIONERY">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar mobile-nav">
+        <div class="container flex-between">
+            <a href="index.html" class="nav-brand">📝 CHUGAZY STATIONERY</a>
+            <button class="mobile-menu-btn desktop-only">☰</button>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#services" class="nav-link">Services</a></li>
+                <li><a href="catalog.html" class="nav-link">Catalog</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+            </ul>
+            <div class="flex mobile-only">
+                <a href="login.html" class="btn btn-outline">Login</a>
+                <a href="login.html" class="btn btn-primary">Sign Up</a>
+                <button data-theme-toggle class="btn btn-secondary">🌙</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-slider">
+            <div class="slide active">
+                <div style="background: linear-gradient(135deg, #6366f1 0%, #06b6d4 100%); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem;">📝</div>
+            </div>
+            <div class="slide">
+                <div style="background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem;">📊</div>
+            </div>
+            <div class="slide">
+                <div style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem;">🎯</div>
+            </div>
+        </div>
+        <div class="container text-center hero-content">
+            <h1 class="fade-in">Welcome CHUGAZY Stationery</h1>
+            <p class="fade-in">Stressamline your office supplies with our comprehensive management system. Request, track, and manage stationery items efficiently.</p>
+            <div class="flex-center fade-in" style="gap: 1rem;">
+                <a href="login.html" class="btn btn-lg" style="background: rgb(168, 31, 31); color: white;">Get Started</a>
+                <a href="login.html" class="btn btn-lg btn-outline" style="border-color: white; color: white;">Login</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section style="padding: 4rem 0; background: var(--bg-secondary);">
+        <div class="container">
+            <div class="text-center mb-xl">
+                <h2>Why Choose CHUGAZY Stationery?</h2>
+                <p class="text-muted">Everything you need to manage stationery efficiently</p>
+            </div>
+            
+            <div class="grid grid-3">
+                <div class="card text-center">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎯</div>
+                    <h3>Easy Requests</h3>
+                    <p class="text-muted">Submit and track stationery requests with just a few clicks. Real-time status updates keep you informed.</p>
+                </div>
+                <div class="card text-center">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+                    <h3>Smart Inventory</h3>
+                    <p class="text-muted">Automated inventory tracking with low-stock alerts and comprehensive reporting for better planning.</p>
+                </div>
+                
+                <div class="card text-center">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">👥</div>
+                    <h3>User Management</h3>
+                    <p class="text-muted">Role-based access control with separate dashboards for users and administrators.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section style="padding: 4rem 0;">
+        <div class="container">
+            <div class="text-center mb-xl">
+                <h2>How It Works</h2>
+                <p class="text-muted">Simple steps to get your stationery</p>
+            </div>
+            
+            <div class="grid grid-4">
+                <div class="text-center">
+                    <div class="card" style="background: var(--primary); color: white; width: 60px; height: 60px; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold;">1</div>
+                    <h4>Sign Up</h4>
+                    <p class="text-muted">Create your account with basic information</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="card" style="background: var(--accent); color: white; width: 60px; height: 60px; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold;">2</div>
+                    <h4>Browse Items</h4>
+                    <p class="text-muted">Explore available stationery items</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="card" style="background: var(--success); color: white; width: 60px; height: 60px; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold;">3</div>
+                    <h4>Make Request</h4>
+                    <p class="text-muted">Submit your stationery request</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="card" style="background: var(--warning); color: white; width: 60px; height: 60px; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold;">4</div>
+                    <h4>Get Approved</h4>
+                    <p class="text-muted">Receive your items after approval</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" style="padding: 4rem 0; background: var(--bg-secondary);">
+        <div class="container">
+            <div class="text-center mb-xl">
+                <h2>Our Services</h2>
+                <p class="text-muted">Comprehensive stationery management solutions</p>
+            </div>
+            
+            <div class="grid grid-3">
+                <div class="card card-hover text-center">
+                    <div style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary);">📋</div>
+                    <h3>Request Management</h3>
+                    <p class="text-muted">Submit, track, and manage your stationery requests with real-time status updates.</p>
+                    <a href="user-dashboard.html" class="btn btn-primary">Start Requesting</a>
+                </div>
+                
+                <div class="card card-hover text-center">
+                    <div style="font-size: 3rem; margin-bottom: 1rem; color: var(--success);">📦</div>
+                    <h3>Inventory Control</h3>
+                    <p class="text-muted">Complete inventory management with stock tracking and automated alerts.</p>
+                    <a href="inventory.html" class="btn btn-success">Manage Inventory</a>
+                </div>
+                
+                <div class="card card-hover text-center">
+                    <div style="font-size: 3rem; margin-bottom: 1rem; color: var(--accent);">👥</div>
+                    <h3>User Administration</h3>
+                    <p class="text-muted">Comprehensive user management and role-based access control system.</p>
+                    <a href="user-management.html" class="btn btn-outline">Manage Users</a>
+                </div>
+            </div>
+            
+            
+            <!-- Additional Business Services -->
+            <div class="text-center mb-lg mt-xl">
+                <h3>Additional Services</h3>
+            </div>
+            <div class="grid grid-3 mb-xl">
+                <div class="card card-hover text-center">
+                    <div style="font-size: 3rem; margin-bottom: 1rem; color: var(--warning);">💰</div>
+                    <h3>Loan Application</h3>
+                    <p class="text-muted">Quick and secure loan application processing with competitive rates.</p>
+                    <a href="loan-application.html" class="btn btn-warning">Apply Now</a>
+                </div>
+                
+                <div class="card card-hover text-center">
+                    <div style="font-size: 3rem; margin-bottom: 1rem; color: var(--error);">💼</div>
+                    <h3>Ajira Portal</h3>
+                    <p class="text-muted">Job portal connecting employers with qualified candidates efficiently.</p>
+                    <a href="ajira-portal.html" class="btn btn-error">Find Jobs</a>
+                </div>
+                
+                <div class="card card-hover text-center">
+                    <div style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary);">💻</div>
+                    <h3>Software Installation</h3>
+                    <p class="text-muted">Professional software installation and configuration services.</p>
+                    <a href="software-installation.html" class="btn btn-primary">Get Service</a>
+                </div>
+            </div>
+
+            <div class="grid grid-2 mb-xl">
+                <div class="card card-hover text-center">
+                    <div style="font-size: 3rem; margin-bottom: 1rem; color: var(--accent);">🎓</div>
+                    <h3>Online Classes</h3>
+                    <p class="text-muted">Interactive online learning platform with expert instructors and flexible schedules.</p>
+                    <a href="online-classes.html" class="btn btn-outline">Join Classes</a>
+                </div>
+                
+                <div class="card card-hover text-center">
+                    <div style="font-size: 3rem; margin-bottom: 1rem; color: var(--success);">🖥️</div>
+                    <h3>Computer Shop</h3>
+                    <p class="text-muted">Quality computers, accessories, and repair services for all your tech needs.</p>
+                    <a href="computer-shop.html" class="btn btn-success">Shop Now</a>
+                </div>
+            </div>
+            
+            <div class="grid grid-2">
+                <div class="card card-hover">
+                    <div class="flex">
+                        <div style="font-size: 2.5rem; margin-right: 1rem; color: var(--warning);">🛒</div>
+                        <div>
+                            <h4>Browse Catalog</h4>
+                            <p class="text-muted">Explore our comprehensive stationery catalog with advanced search and filtering.</p>
+                            <a href="catalog.html" class="btn btn-warning btn-sm">View Catalog</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card card-hover">
+                    <div class="flex">
+                        <div style="font-size: 2.5rem; margin-right: 1rem; color: var(--error);">📊</div>
+                        <div>
+                            <h4>Analytics & Reports</h4>
+                            <p class="text-muted">Generate detailed reports and analytics for better decision making.</p>
+                            <a href="admin-dashboard.html" class="btn btn-error btn-sm">View Reports</a>
+                        </div>
+                    </div>
+                </div>
+            </div> color: var(--error);">📊</div>
+                        <div>
+                            <h4>Analytics & Reports</h4>
+                            <p class="text-muted">Generate detailed reports and analytics for better decision making.</p>
+                            <a href="admin-dashboard.html" class="btn btn-error btn-sm">View Reports</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section style="padding: 4rem 0;">
+        <div class="container">
+            <div class="grid grid-4 text-center">
+                <div>
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Items Managed</div>
+                </div>
+                <div>
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+                <div>
+                    <div class="stat-number">1000+</div>
+                    <div class="stat-label">Requests Processed</div>
+                </div>
+                <div>
+                    <div class="stat-number">99%</div>
+                    <div class="stat-label">Satisfaction Rate</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" style="padding: 4rem 0; background: var(--bg-secondary);">
+        <div class="container">
+            <div class="grid grid-2">
+                <div>
+                    <h2>About CHUGAZY STATIONERY</h2>
+                    <p class="text-muted">We provide comprehensive stationery management solutions for modern organizations. Our system streamlines the entire process from request to delivery.</p>
+                    <div class="grid grid-2" style="gap: 1rem; margin-top: 2rem;">
+                        <a href="auth.html" class="btn btn-outline">Login</a>
+                        <a href="auth.html" class="btn btn-outline">Register</a>
+                        <a href="catalog.html" class="btn btn-outline">Browse Catalog</a>
+                        <a href="index.html" class="btn btn-outline">Back to Home</a>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div style="font-size: 8rem; color: var(--primary); margin-bottom: 1rem;">🏢</div>
+                    <h3>Enterprise Ready</h3>
+                    <p class="text-muted">Built for organizations of all sizes with scalable architecture and robust security.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section style="padding: 4rem 0;">
+        <div class="container text-center">
+            <h2>Ready to Get Started?</h2>
+            <p class="text-muted mb-xl">Join hundreds of users who trust our stationery management system</p>
+            <div class="flex-center" style="gap: 1rem;">
+                <a href="auth.html" class="btn btn-primary btn-lg">Get Started</a>
+                <a href="login.html" class="btn btn-outline btn-lg">Sign In</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="bottom-nav mobile-only">
+        <div class="bottom-nav-items">
+            <a href="index.html" class="bottom-nav-item active">
+                <div class="bottom-nav-icon">🏠</div>
+                <span>Home</span>
+            </a>
+            <a href="catalog.html" class="bottom-nav-item">
+                <div class="bottom-nav-icon">🛒</div>
+                <span>Catalog</span>
+            </a>
+            <a href="user-dashboard.html" class="bottom-nav-item">
+                <div class="bottom-nav-icon">📋</div>
+                <span>Dashboard</span>
+            </a>
+            <a href="profile.html" class="bottom-nav-item">
+                <div class="bottom-nav-icon">👤</div>
+                <span>Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Footer -->
+    <footer style="background: var(--text-primary); color: rgb(224, 11, 11); padding: 2rem 0; text-align: center;" class="desktop-only">
+        <div class="container">
+            <p>&copy; 2025 CHUGAZY Stationery Management System. All rights reserved.</p>
+            <p class="text-muted">Built with modern web technologies for efficient office management By ORRESY THE DESIGNER</p>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script src="mobile.js"></script>
+</body>
+</html>

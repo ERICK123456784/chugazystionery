@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Application - CHUGAZY STATIONERY</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="user-dashboard.html" class="nav-brand">📝 CHUGAZY STATIONERY</a>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="catalog.html" class="nav-link">Catalog</a></li>
+                <li><a href="auth.html" class="nav-link">Login</a></li>
+            </ul>
+            <div class="flex">
+                <a href="auth.html" class="btn btn-primary">Login / Register</a>
+                <button data-theme-toggle class="btn btn-secondary">🌙</button>
+            </div>
+            <div id="servicesDropdown" class="services-dropdown hidden">
+                <a href="loan-application.html">💰 Loan Application</a>
+                <a href="ajira-portal.html">💼 Job Portal</a>
+                <a href="software-installation.html">💻 Software Installation</a>
+                <a href="online-classes.html">🎓 Online Classes</a>
+                <a href="computer-shop.html">🖥️ Computer Shop</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" style="min-height: 300px;">
+        <div class="container text-center hero-content">
+            <h1 class="fade-in">💰 Loan Application Service</h1>
+            <p class="fade-in">Quick and secure loan processing with competitive rates</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="grid grid-2 mb-xl">
+            <div class="card">
+                <h2>Apply for a Loan</h2>
+                <form id="loanForm">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="fullName" class="form-input" required>
+                    </div>
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Loan Amount</label>
+                            <input type="number" name="amount" class="form-input" required min="1000">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Loan Purpose</label>
+                            <select name="purpose" class="form-select" required>
+                                <option value="">Select Purpose</option>
+                                <option value="business">Business</option>
+                                <option value="personal">Personal</option>
+                                <option value="education">Education</option>
+                                <option value="home">Home</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Monthly Income</label>
+                        <input type="number" name="income" class="form-input" required>
+                    </div>
+                    <button type="submit" class="btn btn-warning">Submit Application</button>
+                </form>
+            </div>
+            <div class="card">
+                <h3>Loan Features</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 0.5rem 0;">✅ Competitive interest rates</li>
+                    <li style="padding: 0.5rem 0;">✅ Quick approval process</li>
+                    <li style="padding: 0.5rem 0;">✅ Flexible repayment terms</li>
+                    <li style="padding: 0.5rem 0;">✅ No hidden fees</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Toggle services dropdown
+        function toggleServicesMenu() {
+            const dropdown = document.getElementById('servicesDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('servicesDropdown');
+            const servicesLink = e.target.closest('[onclick="toggleServicesMenu()"]');
+            if (!servicesLink && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        // Save loan application
+        document.getElementById('loanForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!auth.isAuthenticated()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const formData = new FormData(e.target);
+            const loanData = {
+                id: Date.now().toString(),
+                userId: auth.currentUser.id,
+                userName: auth.currentUser.name,
+                userEmail: auth.currentUser.email,
+                fullName: formData.get('fullName'),
+                amount: formData.get('amount'),
+                purpose: formData.get('purpose'),
+                income: formData.get('income'),
+                status: 'pending',
+                serviceType: 'loan',
+                applicationDate: new Date().toISOString()
+            };
+            
+            // Save to service applications for admin
+            const serviceApps = JSON.parse(localStorage.getItem('serviceApplications') || '[]');
+            serviceApps.push(loanData);
+            localStorage.setItem('serviceApplications', JSON.stringify(serviceApps));
+            
+            alert('Loan application submitted successfully!');
+            e.target.reset();
+        });
+    </script>
+</body>
+</html>

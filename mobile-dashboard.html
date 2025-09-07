@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dashboard - CHUGAZY STATIONERY</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="mobile.css">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="CHUGAZY STATIONERY">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body class="mobile-device">
+    <!-- Mobile Header -->
+    <header class="mobile-nav mobile-safe-top">
+        <div class="container flex-between">
+            <div>
+                <h1 style="font-size: 1.25rem; margin: 0;">Dashboard</h1>
+                <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0;">Welcome back, <span data-user-name>User</span></p>
+            </div>
+            <div class="flex" style="gap: var(--space-sm);">
+                <button data-theme-toggle class="mobile-menu-btn">🌙</button>
+                <button data-logout class="mobile-menu-btn">🚪</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-content mobile-pull-refresh">
+        <div class="mobile-refresh-indicator"></div>
+        
+        <!-- Mobile Stats -->
+        <div class="mobile-stats-grid">
+            <div class="mobile-stat-card">
+                <span class="mobile-stat-number" id="totalRequests">0</span>
+                <div class="mobile-stat-label">Total Requests</div>
+            </div>
+            <div class="mobile-stat-card" style="background: linear-gradient(135deg, var(--success), var(--accent));">
+                <span class="mobile-stat-number" id="approvedRequests">0</span>
+                <div class="mobile-stat-label">Approved</div>
+            </div>
+            <div class="mobile-stat-card" style="background: linear-gradient(135deg, var(--warning), var(--error));">
+                <span class="mobile-stat-number" id="pendingRequests">0</span>
+                <div class="mobile-stat-label">Pending</div>
+            </div>
+            <div class="mobile-stat-card" style="background: linear-gradient(135deg, var(--accent), var(--primary));">
+                <span class="mobile-stat-number" id="rejectedRequests">0</span>
+                <div class="mobile-stat-label">Rejected</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="mobile-card">
+            <h3 style="margin-bottom: var(--space-md);">Quick Actions</h3>
+            <div class="grid grid-2" style="gap: var(--space-sm);">
+                <button class="mobile-btn btn-primary" data-mobile-modal="requestModal">
+                    📝 New Request
+                </button>
+                <a href="catalog.html" class="mobile-btn btn-outline">
+                    🛒 Browse Catalog
+                </a>
+            </div>
+        </div>
+
+        <!-- Available Services -->
+        <div class="mobile-card">
+            <h3 style="margin-bottom: var(--space-md);">Available Services</h3>
+            <div class="mobile-list-item" onclick="window.location.href='loan-application.html'">
+                <div class="mobile-list-icon" style="background: var(--warning);">💰</div>
+                <div class="mobile-list-content">
+                    <div class="mobile-list-title">Loan Application</div>
+                    <div class="mobile-list-subtitle">Apply for business loans</div>
+                </div>
+                <div style="color: var(--text-secondary);">›</div>
+            </div>
+            
+            <div class="mobile-list-item" onclick="window.location.href='ajira-portal.html'">
+                <div class="mobile-list-icon" style="background: var(--error);">💼</div>
+                <div class="mobile-list-content">
+                    <div class="mobile-list-title">Job Portal</div>
+                    <div class="mobile-list-subtitle">Find career opportunities</div>
+                </div>
+                <div style="color: var(--text-secondary);">›</div>
+            </div>
+            
+            <div class="mobile-list-item" onclick="window.location.href='software-installation.html'">
+                <div class="mobile-list-icon" style="background: var(--primary);">💻</div>
+                <div class="mobile-list-content">
+                    <div class="mobile-list-title">Software Installation</div>
+                    <div class="mobile-list-subtitle">Professional tech support</div>
+                </div>
+                <div style="color: var(--text-secondary);">›</div>
+            </div>
+            
+            <div class="mobile-list-item" onclick="window.location.href='online-classes.html'">
+                <div class="mobile-list-icon" style="background: var(--accent);">🎓</div>
+                <div class="mobile-list-content">
+                    <div class="mobile-list-title">Online Classes</div>
+                    <div class="mobile-list-subtitle">Learn new skills online</div>
+                </div>
+                <div style="color: var(--text-secondary);">›</div>
+            </div>
+            
+            <div class="mobile-list-item" onclick="window.location.href='computer-shop.html'">
+                <div class="mobile-list-icon" style="background: var(--success);">🖥️</div>
+                <div class="mobile-list-content">
+                    <div class="mobile-list-title">Computer Shop</div>
+                    <div class="mobile-list-subtitle">Buy computers & accessories</div>
+                </div>
+                <div style="color: var(--text-secondary);">›</div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="mobile-card">
+            <h3 style="margin-bottom: var(--space-md);">Recent Activity</h3>
+            <div id="recentActivity">
+                <div class="mobile-loading">
+                    <div class="mobile-spinner"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="bottom-nav mobile-safe-bottom">
+        <div class="bottom-nav-items">
+            <a href="mobile-dashboard.html" class="bottom-nav-item active">
+                <div class="bottom-nav-icon">📊</div>
+                <span>Dashboard</span>
+            </a>
+            <a href="catalog.html" class="bottom-nav-item">
+                <div class="bottom-nav-icon">🛒</div>
+                <span>Catalog</span>
+            </a>
+            <a href="profile.html" class="bottom-nav-item">
+                <div class="bottom-nav-icon">👤</div>
+                <span>Profile</span>
+            </a>
+            <a href="settings.html" class="bottom-nav-item">
+                <div class="bottom-nav-icon">⚙️</div>
+                <span>Settings</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Floating Action Button -->
+    <button class="mobile-fab" data-mobile-modal="requestModal">
+        ➕
+    </button>
+
+    <!-- Mobile Request Modal -->
+    <div id="requestModal" class="mobile-modal">
+        <div class="mobile-modal-content">
+            <div class="flex-between" style="margin-bottom: var(--space-lg);">
+                <h3>New Request</h3>
+                <button class="mobile-modal-close" style="background: none; border: none; font-size: 1.5rem;">×</button>
+            </div>
+            <form id="mobileRequestForm">
+                <div class="mobile-form-group">
+                    <label class="mobile-form-label">Item Name</label>
+                    <input type="text" name="itemName" class="mobile-form-input" required placeholder="Enter item name">
+                </div>
+                <div class="mobile-form-group">
+                    <label class="mobile-form-label">Category</label>
+                    <select name="category" class="mobile-form-input" required>
+                        <option value="">Select Category</option>
+                        <option value="Paper">Paper</option>
+                        <option value="Writing">Writing</option>
+                        <option value="Office Tools">Office Tools</option>
+                        <option value="Filing">Filing</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Art Supplies">Art Supplies</option>
+                    </select>
+                </div>
+                <div class="mobile-form-group">
+                    <label class="mobile-form-label">Quantity</label>
+                    <input type="number" name="quantity" class="mobile-form-input" required min="1" value="1">
+                </div>
+                <div class="mobile-form-group">
+                    <label class="mobile-form-label">Urgency</label>
+                    <select name="urgency" class="mobile-form-input" required>
+                        <option value="low">Low - Within 2 weeks</option>
+                        <option value="medium" selected>Medium - Within 1 week</option>
+                        <option value="high">High - Within 3 days</option>
+                        <option value="urgent">Urgent - ASAP</option>
+                    </select>
+                </div>
+                <div class="mobile-form-group">
+                    <label class="mobile-form-label">Description (Optional)</label>
+                    <textarea name="description" class="mobile-form-input" placeholder="Additional details..." rows="3"></textarea>
+                </div>
+                <button type="submit" class="mobile-btn btn-primary">Submit Request</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script src="mobile.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboardData();
+            setupMobileRequestForm();
+        });
+
+        function loadDashboardData() {
+            if (!auth.isAuthenticated()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+            const userRequests = requests.filter(r => r.userId === auth.currentUser.id);
+
+            // Update stats
+            document.getElementById('totalRequests').textContent = userRequests.length;
+            document.getElementById('approvedRequests').textContent = userRequests.filter(r => r.status === 'approved').length;
+            document.getElementById('pendingRequests').textContent = userRequests.filter(r => r.status === 'pending').length;
+            document.getElementById('rejectedRequests').textContent = userRequests.filter(r => r.status === 'rejected').length;
+
+            // Load recent activity
+            loadRecentActivity(userRequests);
+        }
+
+        function loadRecentActivity(requests) {
+            const container = document.getElementById('recentActivity');
+            const recentRequests = requests.slice(-5).reverse();
+
+            if (recentRequests.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No recent activity</p>';
+                return;
+            }
+
+            container.innerHTML = recentRequests.map(request => `
+                <div class="mobile-list-item">
+                    <div class="mobile-list-icon" style="background: ${getStatusColor(request.status)};">📝</div>
+                    <div class="mobile-list-content">
+                        <div class="mobile-list-title">${request.itemName}</div>
+                        <div class="mobile-list-subtitle">Qty: ${request.quantity} • ${new Date(request.requestDate).toLocaleDateString()}</div>
+                    </div>
+                    <span class="badge badge-${getStatusColor(request.status)}" style="font-size: 0.75rem;">${request.status}</span>
+                </div>
+            `).join('');
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'approved': return 'var(--success)';
+                case 'rejected': return 'var(--error)';
+                case 'pending': return 'var(--warning)';
+                default: return 'var(--primary)';
+            }
+        }
+
+        function setupMobileRequestForm() {
+            document.getElementById('mobileRequestForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(e.target);
+                const requestData = {
+                    id: Date.now().toString(),
+                    userId: auth.currentUser.id,
+                    userName: auth.currentUser.name,
+                    itemName: formData.get('itemName'),
+                    category: formData.get('category'),
+                    quantity: parseInt(formData.get('quantity')),
+                    urgency: formData.get('urgency'),
+                    description: formData.get('description'),
+                    status: 'pending',
+                    requestDate: new Date().toISOString()
+                };
+
+                const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+                requests.push(requestData);
+                localStorage.setItem('requests', JSON.stringify(requests));
+
+                mobileApp.showToast('Request submitted successfully!', 'success');
+                mobileApp.closeMobileModal(document.getElementById('requestModal'));
+                e.target.reset();
+                loadDashboardData();
+            });
+        }
+    </script>
+</body>
+</html>

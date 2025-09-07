@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Shop - CHUGAZY STATIONERY</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="user-dashboard.html" class="nav-brand">📝 CHUGAZY STATIONERY</a>
+            <ul class="nav-menu">
+                <li><a href="user-dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="catalog.html" class="nav-link">Catalog</a></li>
+                <li><a href="#" class="nav-link" onclick="toggleServicesMenu()">Services ▼</a></li>
+                <li><a href="profile.html" class="nav-link">Profile</a></li>
+            </ul>
+            <div class="flex">
+                <span class="text-muted">Welcome, <span data-user-name>User</span></span>
+                <button data-theme-toggle class="btn btn-secondary">🌙</button>
+                <button data-logout class="btn btn-outline">Logout</button>
+            </div>
+            <div id="servicesDropdown" class="services-dropdown hidden">
+                <a href="loan-application.html">💰 Loan Application</a>
+                <a href="ajira-portal.html">💼 Job Portal</a>
+                <a href="software-installation.html">💻 Software Installation</a>
+                <a href="online-classes.html">🎓 Online Classes</a>
+                <a href="computer-shop.html">🖥️ Computer Shop</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" style="min-height: 300px;">
+        <div class="container text-center hero-content">
+            <h1 class="fade-in">🖥️ Computer Shop</h1>
+            <p class="fade-in">Quality computers and tech solutions</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="card mb-xl">
+            <div class="flex-between">
+                <h2>Featured Products</h2>
+                <div class="flex">
+                    <button class="btn btn-outline">Laptops</button>
+                    <button class="btn btn-outline">Desktops</button>
+                    <button class="btn btn-outline">Accessories</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-3 mb-xl">
+            <div class="card">
+                <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem; color: var(--primary);">💻</div>
+                <h3>Business Laptop</h3>
+                <p class="text-muted">Intel i5, 8GB RAM, 256GB SSD</p>
+                <div class="flex-between">
+                    <span style="font-size: 1.5rem; font-weight: bold; color: var(--success);">TSh 2,200,000</span>
+                    <button class="btn btn-success btn-sm">Add to Cart</button>
+                </div>
+            </div>
+            <div class="card">
+                <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem; color: var(--accent);">🖥️</div>
+                <h3>Gaming Desktop</h3>
+                <p class="text-muted">AMD Ryzen 7, 16GB RAM, RTX 3060</p>
+                <div class="flex-between">
+                    <span style="font-size: 1.5rem; font-weight: bold; color: var(--success);">TSh 3,200,000</span>
+                    <button class="btn btn-success btn-sm">Add to Cart</button>
+                </div>
+            </div>
+            <div class="card">
+                <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem; color: var(--warning);">⌨️</div>
+                <h3>Wireless Keyboard</h3>
+                <p class="text-muted">Mechanical keys, RGB backlight</p>
+                <div class="flex-between">
+                    <span style="font-size: 1.5rem; font-weight: bold; color: var(--success);">TSh 195,000</span>
+                    <button class="btn btn-success btn-sm">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-2 mb-xl">
+            <div class="card">
+                <h3>Our Services</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 0.5rem 0;">🔧 Computer Repair</li>
+                    <li style="padding: 0.5rem 0;">⬆️ Hardware Upgrades</li>
+                    <li style="padding: 0.5rem 0;">💾 Data Recovery</li>
+                    <li style="padding: 0.5rem 0;">🛡️ Virus Removal</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Why Shop With Us?</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 0.5rem 0;">✅ Competitive prices</li>
+                    <li style="padding: 0.5rem 0;">✅ Quality guarantee</li>
+                    <li style="padding: 0.5rem 0;">✅ Expert support</li>
+                    <li style="padding: 0.5rem 0;">✅ Fast delivery</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Request a Quote</h2>
+            <form>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Product Category</label>
+                        <select class="form-select" required>
+                            <option value="">Select Category</option>
+                            <option value="laptop">Laptop</option>
+                            <option value="desktop">Desktop</option>
+                            <option value="accessories">Accessories</option>
+                            <option value="repair">Repair Service</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Budget Range</label>
+                        <select class="form-select" required>
+                            <option value="">Select Budget</option>
+                            <option value="500">Under TSh 1,200,000</option>
+                            <option value="1000">TSh 1,200,000 - 2,500,000</option>
+                            <option value="2000">TSh 2,500,000 - 5,000,000</option>
+                            <option value="2000+">Above TSh 5,000,000</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Requirements</label>
+                    <textarea class="form-textarea" placeholder="Describe your needs..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-success" onclick="submitQuoteRequest(event)">Get Quote</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script>
+        function toggleServicesMenu() {
+            const dropdown = document.getElementById('servicesDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('servicesDropdown');
+            const servicesLink = e.target.closest('[onclick="toggleServicesMenu()"]');
+            if (!servicesLink && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        function submitQuoteRequest(e) {
+            e.preventDefault();
+            if (!auth.isAuthenticated()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const form = e.target.closest('form');
+            const formData = new FormData(form);
+            const quoteRequest = {
+                id: Date.now().toString(),
+                userId: auth.currentUser.id,
+                userName: auth.currentUser.name,
+                userEmail: auth.currentUser.email,
+                category: formData.get('category'),
+                budget: formData.get('budget'),
+                requirements: formData.get('requirements'),
+                status: 'pending',
+                serviceType: 'shop',
+                applicationDate: new Date().toISOString()
+            };
+
+            const serviceApps = JSON.parse(localStorage.getItem('serviceApplications') || '[]');
+            serviceApps.push(quoteRequest);
+            localStorage.setItem('serviceApplications', JSON.stringify(serviceApps));
+
+            alert('Quote request submitted successfully!');
+            form.reset();
+        }
+    </script>
+</body>
+</html>

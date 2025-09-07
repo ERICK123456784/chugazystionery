@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - CHUGAZY STATIONERY</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="user-dashboard.html" class="nav-brand">📝 CHUGAZY STATIONERY</a>
+            <ul class="nav-menu">
+                <li><a href="user-dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="catalog.html" class="nav-link">Catalog</a></li>
+                <li><a href="profile.html" class="nav-link">Profile</a></li>
+                <li><a href="settings.html" class="nav-link active">Settings</a></li>
+            </ul>
+            <div class="flex">
+                <span class="text-muted">Welcome, <span data-user-name>User</span></span>
+                <button data-theme-toggle class="btn btn-secondary">🌙</button>
+                <button data-logout class="btn btn-outline">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="dashboard-header">
+        <div class="container">
+            <h1>Settings</h1>
+            <p class="text-muted">Customize your experience and preferences</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="grid grid-2">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Appearance</h3>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Theme</label>
+                    <div class="flex" style="background: var(--bg-secondary); border-radius: var(--radius-md); padding: 4px;">
+                        <button type="button" class="btn btn-sm theme-btn active" data-theme="light" style="flex: 1; margin: 0;">☀️ Light</button>
+                        <button type="button" class="btn btn-sm theme-btn" data-theme="dark" style="flex: 1; margin: 0;">🌙 Dark</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Font Size</label>
+                    <select class="form-select" id="fontSize">
+                        <option value="small">Small</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="large">Large</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Notifications</h3>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="emailNotifications" checked>
+                        <span>Email notifications for request updates</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="browserNotifications" checked>
+                        <span>Browser notifications</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="weeklyDigest">
+                        <span>Weekly activity digest</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-xl">
+            <div class="card-header">
+                <h3>Privacy & Security</h3>
+            </div>
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="profileVisibility" checked>
+                        <span>Make profile visible to other users</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="activityTracking" checked>
+                        <span>Allow activity tracking for analytics</span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-warning" onclick="clearData()">Clear All Data</button>
+                <button class="btn btn-error" onclick="deleteAccount()">Delete Account</button>
+            </div>
+        </div>
+
+        <div class="card mt-xl">
+            <div class="card-header">
+                <h3>About</h3>
+            </div>
+            <div class="grid grid-2">
+                <div>
+                    <p><strong>Version:</strong> 1.0.0</p>
+                    <p><strong>Last Updated:</strong> January 2025</p>
+                    <p><strong>Developer:</strong> ORRESY THE DESIGNER</p>
+                </div>
+                <div>
+                    <p><strong>Support:</strong> support@chugazy.com</p>
+                    <p><strong>Documentation:</strong> <a href="#" class="text-primary">View Docs</a></p>
+                    <p><strong>License:</strong> MIT License</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSettings();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Theme toggle
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const theme = btn.dataset.theme;
+                    setTheme(theme);
+                });
+            });
+
+            // Font size
+            document.getElementById('fontSize').addEventListener('change', (e) => {
+                setFontSize(e.target.value);
+            });
+
+            // Save settings on change
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', saveSettings);
+            });
+        }
+
+        function loadSettings() {
+            const settings = JSON.parse(localStorage.getItem('userSettings') || '{}');
+            
+            // Load theme
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.theme === currentTheme);
+                btn.classList.toggle('btn-primary', btn.dataset.theme === currentTheme);
+                btn.classList.toggle('btn-secondary', btn.dataset.theme !== currentTheme);
+            });
+
+            // Load other settings
+            document.getElementById('fontSize').value = settings.fontSize || 'medium';
+            document.getElementById('emailNotifications').checked = settings.emailNotifications !== false;
+            document.getElementById('browserNotifications').checked = settings.browserNotifications !== false;
+            document.getElementById('weeklyDigest').checked = settings.weeklyDigest || false;
+            document.getElementById('profileVisibility').checked = settings.profileVisibility !== false;
+            document.getElementById('activityTracking').checked = settings.activityTracking !== false;
+        }
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.theme === theme);
+                btn.classList.toggle('btn-primary', btn.dataset.theme === theme);
+                btn.classList.toggle('btn-secondary', btn.dataset.theme !== theme);
+            });
+
+            saveSettings();
+        }
+
+        function setFontSize(size) {
+            const sizes = {
+                small: '14px',
+                medium: '16px',
+                large: '18px'
+            };
+            
+            document.documentElement.style.fontSize = sizes[size];
+            saveSettings();
+        }
+
+        function saveSettings() {
+            const settings = {
+                fontSize: document.getElementById('fontSize').value,
+                emailNotifications: document.getElementById('emailNotifications').checked,
+                browserNotifications: document.getElementById('browserNotifications').checked,
+                weeklyDigest: document.getElementById('weeklyDigest').checked,
+                profileVisibility: document.getElementById('profileVisibility').checked,
+                activityTracking: document.getElementById('activityTracking').checked
+            };
+
+            localStorage.setItem('userSettings', JSON.stringify(settings));
+            
+            if (window.app) {
+                window.app.showNotification('Settings saved successfully!', 'success');
+            }
+        }
+
+        function clearData() {
+            if (confirm('Are you sure you want to clear all your data? This action cannot be undone.')) {
+                const currentUser = auth.currentUser;
+                
+                // Clear user-specific data
+                const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+                const filteredRequests = requests.filter(r => r.userId !== currentUser.id);
+                localStorage.setItem('requests', JSON.stringify(filteredRequests));
+                
+                localStorage.removeItem('userSettings');
+                
+                if (window.app) {
+                    window.app.showNotification('Data cleared successfully!', 'success');
+                }
+                
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            }
+        }
+
+        function deleteAccount() {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                const currentUser = auth.currentUser;
+                
+                // Remove user from users list
+                const users = auth.getUsers();
+                const filteredUsers = users.filter(u => u.id !== currentUser.id);
+                localStorage.setItem('users', JSON.stringify(filteredUsers));
+                
+                // Remove user's requests
+                const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+                const filteredRequests = requests.filter(r => r.userId !== currentUser.id);
+                localStorage.setItem('requests', JSON.stringify(filteredRequests));
+                
+                // Logout and redirect
+                auth.logout();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Services - CHUGAZY STATIONERY</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="user-dashboard.html" class="nav-brand">📝 CHUGAZY STATIONERY</a>
+            <ul class="nav-menu">
+                <li><a href="user-dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="catalog.html" class="nav-link">Catalog</a></li>
+                <li><a href="my-services.html" class="nav-link active">My Services</a></li>
+                <li><a href="profile.html" class="nav-link">Profile</a></li>
+            </ul>
+            <div class="flex">
+                <span class="text-muted">Welcome, <span data-user-name>User</span></span>
+                <button data-theme-toggle class="btn btn-secondary">🌙</button>
+                <button data-logout class="btn btn-outline">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="dashboard-header">
+        <div class="container">
+            <h1>My Service Applications</h1>
+            <p class="text-muted">Track your service applications and view feedback</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="card mb-xl">
+            <div class="flex-between">
+                <h3>Filter Applications</h3>
+                <div class="flex">
+                    <select id="statusFilter" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                    <select id="serviceFilter" class="form-select">
+                        <option value="">All Services</option>
+                        <option value="loan">Loan Application</option>
+                        <option value="job">Job Portal</option>
+                        <option value="software">Software Installation</option>
+                        <option value="classes">Online Classes</option>
+                        <option value="shop">Computer Shop</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="applicationsContainer">
+            <!-- Dynamic content -->
+        </div>
+    </main>
+
+    <!-- Feedback Modal -->
+    <div id="feedbackModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Application Details & Feedback</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div id="feedbackContent">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!auth.isAuthenticated()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            loadApplications();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('statusFilter').addEventListener('change', filterApplications);
+            document.getElementById('serviceFilter').addEventListener('change', filterApplications);
+        }
+
+        function loadApplications() {
+            const applications = JSON.parse(localStorage.getItem('serviceApplications') || '[]');
+            const userApplications = applications.filter(app => app.userId === auth.currentUser.id);
+            renderApplications(userApplications);
+        }
+
+        function renderApplications(applications) {
+            const container = document.getElementById('applicationsContainer');
+            
+            if (applications.length === 0) {
+                container.innerHTML = `
+                    <div class="card text-center">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
+                        <h3>No Applications Found</h3>
+                        <p class="text-muted">You haven't submitted any service applications yet.</p>
+                        <a href="user-dashboard.html" class="btn btn-primary">Browse Services</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = applications.map(app => `
+                <div class="card mb-lg">
+                    <div class="flex-between">
+                        <div class="flex">
+                            <div style="font-size: 2rem; margin-right: 1rem;">${getServiceIcon(app.serviceType)}</div>
+                            <div>
+                                <h4>${getServiceName(app.serviceType)}</h4>
+                                <p class="text-muted">Applied: ${new Date(app.applicationDate).toLocaleDateString()}</p>
+                                <p class="text-muted">ID: #${app.id.slice(-6)}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="badge badge-${getStatusColor(app.status)}">${app.status.toUpperCase()}</span>
+                            <div style="margin-top: 0.5rem;">
+                                <button class="btn btn-outline btn-sm" onclick="viewDetails('${app.id}')">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                    ${app.feedback ? `
+                        <div style="margin-top: 1rem; padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius);">
+                            <h5>📝 Admin Feedback:</h5>
+                            <p>${app.feedback}</p>
+                            ${app.feedbackDate ? `<small class="text-muted">Feedback given: ${new Date(app.feedbackDate).toLocaleDateString()}</small>` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function filterApplications() {
+            const status = document.getElementById('statusFilter').value;
+            const service = document.getElementById('serviceFilter').value;
+            
+            const applications = JSON.parse(localStorage.getItem('serviceApplications') || '[]');
+            let filtered = applications.filter(app => app.userId === auth.currentUser.id);
+            
+            if (status) {
+                filtered = filtered.filter(app => app.status === status);
+            }
+            
+            if (service) {
+                filtered = filtered.filter(app => app.serviceType === service);
+            }
+            
+            renderApplications(filtered);
+        }
+
+        function viewDetails(id) {
+            const applications = JSON.parse(localStorage.getItem('serviceApplications') || '[]');
+            const app = applications.find(a => a.id === id);
+            
+            if (!app) return;
+            
+            const content = document.getElementById('feedbackContent');
+            content.innerHTML = `
+                <div class="grid grid-2" style="gap: 2rem;">
+                    <div>
+                        <h4>Application Details</h4>
+                        <p><strong>Service:</strong> ${getServiceName(app.serviceType)}</p>
+                        <p><strong>Status:</strong> <span class="badge badge-${getStatusColor(app.status)}">${app.status.toUpperCase()}</span></p>
+                        <p><strong>Applied:</strong> ${new Date(app.applicationDate).toLocaleDateString()}</p>
+                        <p><strong>Application ID:</strong> #${app.id.slice(-6)}</p>
+                        ${getApplicationSpecificDetails(app)}
+                    </div>
+                    <div>
+                        <h4>Status & Feedback</h4>
+                        ${app.feedback ? `
+                            <div style="padding: 1rem; background: var(--bg-secondary); border-radius: var(--radius); margin-bottom: 1rem;">
+                                <h5>Admin Feedback:</h5>
+                                <p>${app.feedback}</p>
+                                ${app.feedbackDate ? `<small class="text-muted">Given: ${new Date(app.feedbackDate).toLocaleDateString()}</small>` : ''}
+                            </div>
+                        ` : `
+                            <p class="text-muted">No feedback available yet. Please wait for admin review.</p>
+                        `}
+                        
+                        <div style="margin-top: 1rem;">
+                            <h5>Next Steps:</h5>
+                            ${getNextSteps(app.status, app.serviceType)}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('feedbackModal').classList.add('active');
+        }
+
+        function getServiceIcon(serviceType) {
+            const icons = {
+                'loan': '💰',
+                'job': '💼',
+                'software': '💻',
+                'classes': '🎓',
+                'shop': '🖥️'
+            };
+            return icons[serviceType] || '📋';
+        }
+
+        function getServiceName(serviceType) {
+            const names = {
+                'loan': 'Loan Application',
+                'job': 'Job Portal Application',
+                'software': 'Software Installation',
+                'classes': 'Online Classes',
+                'shop': 'Computer Shop Quote'
+            };
+            return names[serviceType] || 'Service Application';
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'approved': return 'success';
+                case 'rejected': return 'error';
+                case 'pending': return 'warning';
+                default: return 'info';
+            }
+        }
+
+        function getApplicationSpecificDetails(app) {
+            switch (app.serviceType) {
+                case 'loan':
+                    return `
+                        <p><strong>Amount:</strong> TSh ${parseInt(app.amount).toLocaleString()}</p>
+                        <p><strong>Purpose:</strong> ${app.purpose}</p>
+                        <p><strong>Monthly Income:</strong> TSh ${parseInt(app.income).toLocaleString()}</p>
+                    `;
+                case 'job':
+                    return `
+                        <p><strong>Position:</strong> ${app.position}</p>
+                        <p><strong>Experience:</strong> ${app.experience} years</p>
+                        <p><strong>Expected Salary:</strong> TSh ${parseInt(app.expectedSalary).toLocaleString()}</p>
+                    `;
+                case 'software':
+                    return `
+                        <p><strong>Software:</strong> ${app.software}</p>
+                        <p><strong>OS:</strong> ${app.operatingSystem}</p>
+                        <p><strong>Installation Type:</strong> ${app.installationType}</p>
+                    `;
+                case 'classes':
+                    return `
+                        <p><strong>Course:</strong> ${app.course}</p>
+                        <p><strong>Level:</strong> ${app.level}</p>
+                        <p><strong>Duration:</strong> ${app.duration}</p>
+                    `;
+                case 'shop':
+                    return `
+                        <p><strong>Category:</strong> ${app.category}</p>
+                        <p><strong>Budget:</strong> ${app.budget}</p>
+                        <p><strong>Requirements:</strong> ${app.requirements}</p>
+                    `;
+                default:
+                    return '';
+            }
+        }
+
+        function getNextSteps(status, serviceType) {
+            switch (status) {
+                case 'pending':
+                    return '<p class="text-warning">⏳ Your application is under review. We will contact you soon.</p>';
+                case 'approved':
+                    return `
+                        <p class="text-success">✅ Congratulations! Your application has been approved.</p>
+                        <p>We will contact you within 2-3 business days with further instructions.</p>
+                    `;
+                case 'rejected':
+                    return `
+                        <p class="text-error">❌ Your application was not approved at this time.</p>
+                        <p>You can reapply after addressing the feedback provided above.</p>
+                    `;
+                default:
+                    return '<p class="text-muted">Status unknown. Please contact support.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

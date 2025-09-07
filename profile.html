@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - CHUGAZY STATIONERY</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="user-dashboard.html" class="nav-brand">📝 CHUGAZY STATIONERY</a>
+            <ul class="nav-menu">
+                <li><a href="user-dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="catalog.html" class="nav-link">Catalog</a></li>
+                <li><a href="#" class="nav-link" onclick="toggleServicesMenu()">Services ▼</a></li>
+                <li><a href="profile.html" class="nav-link active">Profile</a></li>
+            </ul>
+            <div id="servicesDropdown" class="services-dropdown hidden">
+                <a href="loan-application.html">💰 Loan Application</a>
+                <a href="ajira-portal.html">💼 Job Portal</a>
+                <a href="software-installation.html">💻 Software Installation</a>
+                <a href="online-classes.html">🎓 Online Classes</a>
+                <a href="computer-shop.html">🖥️ Computer Shop</a>
+            </div>
+            <div class="flex">
+                <span class="text-muted">Welcome, <span data-user-name>User</span></span>
+                <button data-theme-toggle class="btn btn-secondary">🌙</button>
+                <button data-logout class="btn btn-outline">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="dashboard-header">
+        <div class="container">
+            <h1>My Profile</h1>
+            <p class="text-muted">Manage your account information and preferences</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="grid grid-2">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Profile Information</h3>
+                </div>
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="name" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" name="email" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Department</label>
+                        <select name="department" class="form-select">
+                            <option value="">Select Department</option>
+                            <option value="IT">Information Technology</option>
+                            <option value="HR">Human Resources</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Operations">Operations</option>
+                            <option value="Sales">Sales</option>
+                            <option value="Admin">Administration</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" name="phone" class="form-input">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Change Password</h3>
+                </div>
+                <form id="passwordForm">
+                    <div class="form-group">
+                        <label class="form-label">Current Password</label>
+                        <input type="password" name="currentPassword" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">New Password</label>
+                        <input type="password" name="newPassword" class="form-input" required id="newPassword">
+                        <div class="password-strength" id="passwordStrength" style="margin-top: 0.5rem; font-size: 0.75rem;"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" name="confirmPassword" class="form-input" required id="confirmPassword">
+                        <div id="passwordMatch" style="margin-top: 0.5rem; font-size: 0.75rem;"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning">Change Password</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-xl">
+            <div class="card-header">
+                <h3>Account Statistics</h3>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number" id="totalRequests">0</span>
+                    <div class="stat-label">Total Requests</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="approvedRequests">0</span>
+                    <div class="stat-label">Approved</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="pendingRequests">0</span>
+                    <div class="stat-label">Pending</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="rejectedRequests">0</span>
+                    <div class="stat-label">Rejected</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-xl">
+            <div class="card-header">
+                <h3>Recent Activity</h3>
+            </div>
+            <div id="recentActivity">
+                <p class="text-muted">Loading activity...</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProfileData();
+            setupPasswordValidation();
+            setupForms();
+        });
+
+        function loadProfileData() {
+            if (!auth.isAuthenticated()) return;
+
+            const user = auth.currentUser;
+            const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+            const userRequests = requests.filter(r => r.userId === user.id);
+
+            // Update statistics
+            document.getElementById('totalRequests').textContent = userRequests.length;
+            document.getElementById('approvedRequests').textContent = userRequests.filter(r => r.status === 'approved').length;
+            document.getElementById('pendingRequests').textContent = userRequests.filter(r => r.status === 'pending').length;
+            document.getElementById('rejectedRequests').textContent = userRequests.filter(r => r.status === 'rejected').length;
+
+            // Load recent activity
+            loadRecentActivity(userRequests);
+        }
+
+        function loadRecentActivity(requests) {
+            const container = document.getElementById('recentActivity');
+            const recentRequests = requests.slice(-10).reverse();
+
+            if (recentRequests.length === 0) {
+                container.innerHTML = '<p class="text-muted">No recent activity</p>';
+                return;
+            }
+
+            container.innerHTML = recentRequests.map(request => `
+                <div class="flex-between" style="padding: 1rem 0; border-bottom: 1px solid var(--border);">
+                    <div>
+                        <div style="font-weight: 500;">Requested ${request.itemName}</div>
+                        <div class="text-muted" style="font-size: 0.875rem;">
+                            Quantity: ${request.quantity} • ${new Date(request.requestDate).toLocaleDateString()}
+                        </div>
+                    </div>
+                    <span class="badge badge-${getStatusColor(request.status)}">${request.status}</span>
+                </div>
+            `).join('');
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'approved': return 'success';
+                case 'rejected': return 'error';
+                case 'pending': return 'warning';
+                default: return 'info';
+            }
+        }
+
+        function setupPasswordValidation() {
+            const newPasswordInput = document.getElementById('newPassword');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const strengthIndicator = document.getElementById('passwordStrength');
+            const matchIndicator = document.getElementById('passwordMatch');
+
+            newPasswordInput.addEventListener('input', () => {
+                const password = newPasswordInput.value;
+                const strength = checkPasswordStrength(password);
+                
+                strengthIndicator.textContent = strength.text;
+                strengthIndicator.style.color = strength.color;
+            });
+
+            confirmPasswordInput.addEventListener('input', () => {
+                const password = newPasswordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                
+                if (confirmPassword.length > 0) {
+                    if (password === confirmPassword) {
+                        matchIndicator.textContent = '✓ Passwords match';
+                        matchIndicator.style.color = 'var(--success)';
+                    } else {
+                        matchIndicator.textContent = '✗ Passwords do not match';
+                        matchIndicator.style.color = 'var(--error)';
+                    }
+                } else {
+                    matchIndicator.textContent = '';
+                }
+            });
+        }
+
+        function checkPasswordStrength(password) {
+            if (password.length === 0) return { text: '', color: '' };
+            
+            let score = 0;
+            if (password.length >= 8) score++;
+            if (/[A-Z]/.test(password)) score++;
+            if (/[a-z]/.test(password)) score++;
+            if (/\d/.test(password)) score++;
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) score++;
+
+            if (score === 5) {
+                return { text: '✓ Strong password', color: 'var(--success)' };
+            } else if (score >= 3) {
+                return { text: '⚠ Medium strength', color: 'var(--warning)' };
+            } else {
+                return { text: '✗ Weak password', color: 'var(--error)' };
+            }
+        }
+
+        function setupForms() {
+            document.getElementById('passwordForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                handlePasswordChange(e.target);
+            });
+        }
+
+        // Toggle services dropdown
+        function toggleServicesMenu() {
+            const dropdown = document.getElementById('servicesDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('servicesDropdown');
+            const servicesLink = e.target.closest('[onclick="toggleServicesMenu()"]');
+            if (!servicesLink && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        function handlePasswordChange(form) {
+            const formData = new FormData(form);
+            const currentPassword = formData.get('currentPassword');
+            const newPassword = formData.get('newPassword');
+            const confirmPassword = formData.get('confirmPassword');
+
+            // Validate current password (in real app, verify against server)
+            if (currentPassword !== auth.currentUser.password) {
+                if (window.app) {
+                    window.app.showNotification('Current password is incorrect', 'error');
+                }
+                return;
+            }
+
+            // Validate new password confirmation
+            if (newPassword !== confirmPassword) {
+                if (window.app) {
+                    window.app.showNotification('New passwords do not match', 'error');
+                }
+                return;
+            }
+
+            // Update password (in real app, send to server)
+            const users = auth.getUsers();
+            const userIndex = users.findIndex(u => u.id === auth.currentUser.id);
+            
+            if (userIndex !== -1) {
+                users[userIndex].password = newPassword;
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                if (window.app) {
+                    window.app.showNotification('Password changed successfully!', 'success');
+                }
+                
+                form.reset();
+                document.getElementById('passwordStrength').textContent = '';
+                document.getElementById('passwordMatch').textContent = '';
+            }
+        }
+    </script>
+</body>
+</html>

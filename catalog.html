@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalog - CHUGAZY STATIONERY</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="user-dashboard.html" class="nav-brand">📝 CHUGAZY STATIONERY</a>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="catalog.html" class="nav-link active">Catalog</a></li>
+                <li><a href="auth.html" class="nav-link">Login</a></li>
+            </ul>
+            <div id="servicesDropdown" class="services-dropdown hidden">
+                <a href="loan-application.html">💰 Loan Application</a>
+                <a href="ajira-portal.html">💼 Job Portal</a>
+                <a href="software-installation.html">💻 Software Installation</a>
+                <a href="online-classes.html">🎓 Online Classes</a>
+                <a href="computer-shop.html">🖥️ Computer Shop</a>
+            </div>
+            <div class="flex">
+                <a href="auth.html" class="btn btn-primary">Login / Register</a>
+                <button data-theme-toggle class="btn btn-secondary">🌙</button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="dashboard-header">
+        <div class="container">
+            <h1>Stationery Catalog</h1>
+            <p class="text-muted">Browse and request available stationery items</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="card mb-xl">
+            <div class="flex-between">
+                <div class="flex">
+                    <input type="text" id="searchInput" class="form-input" placeholder="Search items..." style="width: 300px;">
+                    <select id="categoryFilter" class="form-select" style="width: 200px;">
+                        <option value="">All Categories</option>
+                        <option value="Paper">Paper</option>
+                        <option value="Writing">Writing</option>
+                        <option value="Office Tools">Office Tools</option>
+                        <option value="Filing">Filing</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Art Supplies">Art Supplies</option>
+                    </select>
+                </div>
+                <div class="flex">
+                    <button id="gridView" class="btn btn-outline active">Grid</button>
+                    <button id="listView" class="btn btn-outline">List</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="catalogContainer" class="grid grid-3">
+            <!-- Dynamic content -->
+        </div>
+    </main>
+
+    <div id="requestModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Request Item</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="requestForm">
+                <input type="hidden" name="itemName" id="modalItemName">
+                <input type="hidden" name="category" id="modalCategory">
+                
+                <div class="form-group">
+                    <label class="form-label">Item</label>
+                    <input type="text" class="form-input" readonly id="displayItemName">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Quantity</label>
+                    <input type="number" name="quantity" class="form-input" required min="1" value="1">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Urgency</label>
+                    <select name="urgency" class="form-select" required>
+                        <option value="low">Low - Within 2 weeks</option>
+                        <option value="medium" selected>Medium - Within 1 week</option>
+                        <option value="high">High - Within 3 days</option>
+                        <option value="urgent">Urgent - ASAP</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Description (Optional)</label>
+                    <textarea name="description" class="form-textarea" placeholder="Additional details..."></textarea>
+                </div>
+
+                <div class="flex" style="justify-content: flex-end; gap: 1rem;">
+                    <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script>
+        let inventory = [];
+        let isGridView = true;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCatalog();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', filterCatalog);
+            document.getElementById('categoryFilter').addEventListener('change', filterCatalog);
+            document.getElementById('gridView').addEventListener('click', () => toggleView(true));
+            document.getElementById('listView').addEventListener('click', () => toggleView(false));
+        }
+
+        function loadCatalog() {
+            inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
+            renderCatalog(inventory);
+        }
+
+        function renderCatalog(items) {
+            const container = document.getElementById('catalogContainer');
+            
+            if (items.length === 0) {
+                container.innerHTML = '<p class="text-muted">No items available</p>';
+                return;
+            }
+
+            if (isGridView) {
+                container.className = 'grid grid-3';
+                container.innerHTML = items.map(item => `
+                    <div class="card">
+                        <div class="text-center">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">${getItemIcon(item.category)}</div>
+                            <h4>${item.name}</h4>
+                            <p class="text-muted">${item.category}</p>
+                            <p class="text-muted">Stock: ${item.stock} available</p>
+                            <p style="font-weight: 600; color: var(--primary);">TSh ${item.price.toLocaleString()}</p>
+                            ${item.stock > 0 ? 
+                                `<button class="btn btn-primary btn-sm" onclick="requestItem('${item.name}', '${item.category}')">Request</button>` :
+                                `<button class="btn btn-secondary btn-sm" disabled>Out of Stock</button>`
+                            }
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.className = 'grid';
+                container.innerHTML = items.map(item => `
+                    <div class="card">
+                        <div class="flex-between">
+                            <div class="flex">
+                                <div style="font-size: 2rem; margin-right: 1rem;">${getItemIcon(item.category)}</div>
+                                <div>
+                                    <h4>${item.name}</h4>
+                                    <p class="text-muted">${item.category} • Stock: ${item.stock}</p>
+                                    <p style="font-weight: 600; color: var(--primary);">TSh ${item.price.toLocaleString()}</p>
+                                </div>
+                            </div>
+                            <div>
+                                ${item.stock > 0 ? 
+                                    `<button class="btn btn-primary" onclick="requestItem('${item.name}', '${item.category}')">Request</button>` :
+                                    `<button class="btn btn-secondary" disabled>Out of Stock</button>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function getItemIcon(category) {
+            const icons = {
+                'Paper': '📄',
+                'Writing': '🖊️',
+                'Office Tools': '📎',
+                'Filing': '📁',
+                'Technology': '💻',
+                'Art Supplies': '🎨'
+            };
+            return icons[category] || '📦';
+        }
+
+        function filterCatalog() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+
+            const filtered = inventory.filter(item => {
+                const matchesSearch = item.name.toLowerCase().includes(search);
+                const matchesCategory = !category || item.category === category;
+                return matchesSearch && matchesCategory;
+            });
+
+            renderCatalog(filtered);
+        }
+
+        function toggleView(grid) {
+            isGridView = grid;
+            document.getElementById('gridView').classList.toggle('active', grid);
+            document.getElementById('listView').classList.toggle('active', !grid);
+            renderCatalog(inventory);
+        }
+
+        function requestItem(itemName, category) {
+            document.getElementById('modalItemName').value = itemName;
+            document.getElementById('modalCategory').value = category;
+            document.getElementById('displayItemName').value = itemName;
+            document.getElementById('requestModal').classList.add('active');
+        }
+
+        // Toggle services dropdown
+        function toggleServicesMenu() {
+            const dropdown = document.getElementById('servicesDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('servicesDropdown');
+            const servicesLink = e.target.closest('[onclick="toggleServicesMenu()"]');
+            if (!servicesLink && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

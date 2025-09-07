@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication - CHUGAZY STATIONERY</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="index.html" class="nav-brand">📝 CHUGAZY STATIONERY</a>
+            <div class="flex">
+                <a href="index.html" class="btn btn-outline">← Back to Home</a>
+                <button data-theme-toggle class="btn btn-secondary">🌙</button>
+            </div>
+        </div>
+    </nav>
+
+    <section style="min-height: 90vh; display: flex; align-items: center; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);">
+        <div class="container">
+            <div class="grid grid-2" style="max-width: 1000px; margin: 0 auto; gap: 3rem;">
+                <!-- Login Section -->
+                <div class="card" style="padding: 3rem;">
+                    <div class="text-center mb-xl">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🔑</div>
+                        <h2>Sign In</h2>
+                        <p class="text-muted">Welcome back to CHUGAZY</p>
+                    </div>
+
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-input" required placeholder="your@email.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" name="password" class="form-input" required placeholder="Enter password">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Account Type</label>
+                            <select name="userType" class="form-select" required>
+                                <option value="user">User Account</option>
+                                <option value="admin">Administrator</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                    </form>
+
+                    <div class="text-center mt-lg">
+                        <a href="#" onclick="showForgotPassword()" class="text-primary">Forgot Password?</a>
+                    </div>
+                </div>
+
+                <!-- Register Section -->
+                <div class="card" style="padding: 3rem;">
+                    <div class="text-center mb-xl">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">👤</div>
+                        <h2>Create Account</h2>
+                        <p class="text-muted">Join CHUGAZY today</p>
+                    </div>
+
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="name" class="form-input" required placeholder="Your full name">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-input" required placeholder="your@email.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Department</label>
+                            <select name="department" class="form-select" required>
+                                <option value="">Select Department</option>
+                                <option value="IT">IT</option>
+                                <option value="HR">HR</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Operations">Operations</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" name="password" class="form-input" required placeholder="Create password">
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-block">Create Account</button>
+                    </form>
+                </div>
+            </div>
+
+          
+        </div>
+    </section>
+
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        // Login Form Handler
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const email = formData.get('email');
+            const password = formData.get('password');
+            const userType = formData.get('userType');
+
+            const result = auth.login(email, password, userType);
+            
+            if (result.success) {
+                if (userType === 'admin') {
+                    window.location.href = 'admin-dashboard.html';
+                } else {
+                    window.location.href = 'user-dashboard.html';
+                }
+            } else {
+                alert(result.message);
+            }
+        });
+
+        // Register Form Handler
+        document.getElementById('registerForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const userData = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                password: formData.get('password'),
+                department: formData.get('department')
+            };
+
+            const result = auth.register(userData);
+            
+            if (result.success) {
+                alert('Account created successfully! You can now sign in.');
+                e.target.reset();
+            } else {
+                alert(result.message);
+            }
+        });
+
+        function showForgotPassword() {
+            const email = prompt('Enter your email address:');
+            if (email) {
+                alert('Password reset instructions have been sent to ' + email);
+            }
+        }
+    </script>
+</body>
+</html>

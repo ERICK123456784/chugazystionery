@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports & Analytics - CHUGAZY STATIONERY</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="assets/css/mobile.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="admin-dashboard.html" class="nav-brand">📝 CHUGAZY STATIONERY Admin</a>
+            <ul class="nav-menu">
+                <li><a href="admin-dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="inventory.html" class="nav-link">Inventory</a></li>
+                <li><a href="requests.html" class="nav-link">Requests</a></li>
+                <li><a href="user-management.html" class="nav-link">Users</a></li>
+                <li><a href="services-management.html" class="nav-link">Services</a></li>
+                <li><a href="suppliers.html" class="nav-link">Suppliers</a></li>
+                <li><a href="reports.html" class="nav-link active">Reports</a></li>
+            </ul>
+            <div class="flex">
+                <button data-notification-bell class="btn btn-secondary">🔔</button>
+                <button data-theme-toggle class="btn btn-secondary">🌙</button>
+                <button data-logout class="btn btn-outline">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="dashboard-header">
+        <div class="container">
+            <div class="flex-between">
+                <div>
+                    <h1>Reports & Analytics</h1>
+                    <p class="text-muted">Comprehensive reporting and data analysis</p>
+                </div>
+                <div class="flex">
+                    <button class="btn btn-outline" onclick="exportAllReports()">📊 Export All</button>
+                    <button class="btn btn-primary" onclick="generateReport()">📈 Generate Report</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="container">
+        <!-- Report Filters -->
+        <div class="card mb-xl">
+            <div class="card-header">
+                <h3>Report Filters</h3>
+            </div>
+            <div class="grid grid-4">
+                <div class="form-group">
+                    <label class="form-label">Date Range</label>
+                    <select id="dateRange" class="form-select">
+                        <option value="7">Last 7 days</option>
+                        <option value="30" selected>Last 30 days</option>
+                        <option value="90">Last 3 months</option>
+                        <option value="365">Last year</option>
+                        <option value="custom">Custom range</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Report Type</label>
+                    <select id="reportType" class="form-select">
+                        <option value="all">All Reports</option>
+                        <option value="inventory">Inventory Report</option>
+                        <option value="requests">Requests Report</option>
+                        <option value="users">Users Report</option>
+                        <option value="suppliers">Suppliers Report</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Department</label>
+                    <select id="departmentFilter" class="form-select">
+                        <option value="">All Departments</option>
+                        <option value="IT">IT</option>
+                        <option value="HR">HR</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Marketing">Marketing</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select id="statusFilter" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex" style="gap: 1rem; margin-top: var(--space-md);">
+                <button class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
+                <button class="btn btn-outline" onclick="resetFilters()">Reset</button>
+            </div>
+        </div>
+
+        <!-- Analytics Charts -->
+        <div class="grid grid-2 mb-xl">
+            <div class="card">
+                <div class="card-header">
+                    <h3>📊 Inventory Status</h3>
+                </div>
+                <canvas id="inventoryChart" width="400" height="200"></canvas>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>📈 Request Trends</h3>
+                </div>
+                <canvas id="requestsChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <div class="grid grid-2 mb-xl">
+            <div class="card">
+                <div class="card-header">
+                    <h3>📋 Category Analysis</h3>
+                </div>
+                <canvas id="categoryChart" width="400" height="200"></canvas>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>📅 Monthly Trends</h3>
+                </div>
+                <canvas id="trendChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="card mb-xl">
+            <div class="card-header">
+                <h3>📊 Key Performance Indicators</h3>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number" id="totalRequests">0</span>
+                    <div class="stat-label">Total Requests</div>
+                    <div class="stat-change" id="requestsChange">+0%</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="approvalRate">0%</span>
+                    <div class="stat-label">Approval Rate</div>
+                    <div class="stat-change" id="approvalChange">+0%</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="avgProcessingTime">0</span>
+                    <div class="stat-label">Avg Processing Time (days)</div>
+                    <div class="stat-change" id="processingChange">+0%</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="costSavings">TSh 0</span>
+                    <div class="stat-label">Cost Savings</div>
+                    <div class="stat-change" id="savingsChange">+0%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Reports -->
+        <div class="card mb-xl">
+            <div class="card-header">
+                <div class="flex-between">
+                    <h3>📋 Detailed Reports</h3>
+                    <div class="flex">
+                        <button class="btn btn-outline" onclick="printReport()">🖨️ Print</button>
+                        <button class="btn btn-success" onclick="exportToExcel()">📊 Excel</button>
+                        <button class="btn btn-error" onclick="exportToPDF()">📄 PDF</button>
+                    </div>
+                </div>
+            </div>
+            <div id="reportContent">
+                <div class="table-container">
+                    <table class="table" id="reportTable">
+                        <thead id="reportTableHead">
+                            <!-- Dynamic headers -->
+                        </thead>
+                        <tbody id="reportTableBody">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audit Log -->
+        <div class="card">
+            <div class="card-header">
+                <h3>🔍 Audit Log</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Resource</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auditLogBody">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script src="charts.js"></script>
+    <script src="notifications.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadReportsData();
+            setupEventListeners();
+            generateKPIs();
+            loadAuditLog();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('dateRange').addEventListener('change', handleDateRangeChange);
+            document.getElementById('reportType').addEventListener('change', applyFilters);
+        }
+
+        function handleDateRangeChange() {
+            const dateRange = document.getElementById('dateRange').value;
+            if (dateRange === 'custom') {
+                // Show custom date picker
+                const customDateDiv = document.createElement('div');
+                customDateDiv.innerHTML = `
+                    <div class="grid grid-2" style="margin-top: var(--space-sm);">
+                        <input type="date" id="startDate" class="form-input">
+                        <input type="date" id="endDate" class="form-input">
+                    </div>
+                `;
+                document.getElementById('dateRange').parentNode.appendChild(customDateDiv);
+            }
+        }
+
+        function loadReportsData() {
+            const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+            const inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const suppliers = JSON.parse(localStorage.getItem('suppliers') || '[]');
+
+            // Generate default report
+            generateInventoryReport();
+        }
+
+        function generateKPIs() {
+            const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+            const now = new Date();
+            const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+            // Total requests
+            const totalRequests = requests.length;
+            document.getElementById('totalRequests').textContent = totalRequests;
+
+            // Approval rate
+            const approvedRequests = requests.filter(r => r.status === 'approved').length;
+            const approvalRate = totalRequests > 0 ? Math.round((approvedRequests / totalRequests) * 100) : 0;
+            document.getElementById('approvalRate').textContent = approvalRate + '%';
+
+            // Average processing time
+            const processedRequests = requests.filter(r => r.status !== 'pending');
+            const avgProcessingTime = processedRequests.length > 0 ? 
+                Math.round(processedRequests.reduce((sum, r) => {
+                    const requestDate = new Date(r.requestDate);
+                    const processedDate = new Date(r.processedDate || r.requestDate);
+                    return sum + (processedDate - requestDate) / (1000 * 60 * 60 * 24);
+                }, 0) / processedRequests.length) : 0;
+            document.getElementById('avgProcessingTime').textContent = avgProcessingTime;
+
+            // Cost savings (mock calculation)
+            const costSavings = Math.round(totalRequests * 38000); // TSh 38,000 average savings per request
+            document.getElementById('costSavings').textContent = 'TSh ' + costSavings.toLocaleString();
+
+            // Calculate changes (mock data)
+            document.getElementById('requestsChange').textContent = '+12%';
+            document.getElementById('requestsChange').className = 'stat-change positive';
+            
+            document.getElementById('approvalChange').textContent = '+5%';
+            document.getElementById('approvalChange').className = 'stat-change positive';
+            
+            document.getElementById('processingChange').textContent = '-8%';
+            document.getElementById('processingChange').className = 'stat-change positive';
+            
+            document.getElementById('savingsChange').textContent = '+15%';
+            document.getElementById('savingsChange').className = 'stat-change positive';
+        }
+
+        function generateInventoryReport() {
+            const inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
+            
+            const headers = ['Item Name', 'Category', 'Current Stock', 'Min Stock', 'Status', 'Value'];
+            const tableHead = document.getElementById('reportTableHead');
+            const tableBody = document.getElementById('reportTableBody');
+            
+            tableHead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
+            
+            tableBody.innerHTML = inventory.map(item => {
+                const status = item.stock <= item.minStock ? 'Low Stock' : 
+                             item.stock <= item.minStock * 2 ? 'Normal' : 'High Stock';
+                const statusClass = item.stock <= item.minStock ? 'error' : 
+                                  item.stock <= item.minStock * 2 ? 'warning' : 'success';
+                const value = (item.stock * (item.price || 0)).toFixed(2);
+                
+                return `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.category}</td>
+                        <td>${item.stock}</td>
+                        <td>${item.minStock}</td>
+                        <td><span class="badge badge-${statusClass}">${status}</span></td>
+                        <td>TSh ${value}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function generateRequestsReport() {
+            const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+            
+            const headers = ['Request ID', 'User', 'Item', 'Quantity', 'Status', 'Date', 'Processed Date'];
+            const tableHead = document.getElementById('reportTableHead');
+            const tableBody = document.getElementById('reportTableBody');
+            
+            tableHead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
+            
+            tableBody.innerHTML = requests.map(request => `
+                <tr>
+                    <td>#${request.id.slice(-6)}</td>
+                    <td>${request.userName}</td>
+                    <td>${request.itemName}</td>
+                    <td>${request.quantity}</td>
+                    <td><span class="badge badge-${getStatusColor(request.status)}">${request.status}</span></td>
+                    <td>${new Date(request.requestDate).toLocaleDateString()}</td>
+                    <td>${request.processedDate ? new Date(request.processedDate).toLocaleDateString() : '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function applyFilters() {
+            const reportType = document.getElementById('reportType').value;
+            const dateRange = document.getElementById('dateRange').value;
+            const department = document.getElementById('departmentFilter').value;
+            const status = document.getElementById('statusFilter').value;
+
+            switch (reportType) {
+                case 'inventory':
+                    generateInventoryReport();
+                    break;
+                case 'requests':
+                    generateRequestsReport();
+                    break;
+                case 'users':
+                    generateUsersReport();
+                    break;
+                case 'suppliers':
+                    generateSuppliersReport();
+                    break;
+                default:
+                    generateInventoryReport();
+            }
+
+            // Update charts
+            if (window.chartManager) {
+                chartManager.updateCharts();
+            }
+        }
+
+        function generateUsersReport() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            const headers = ['Name', 'Email', 'Department', 'Type', 'Status', 'Created Date'];
+            const tableHead = document.getElementById('reportTableHead');
+            const tableBody = document.getElementById('reportTableBody');
+            
+            tableHead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
+            
+            tableBody.innerHTML = users.map(user => `
+                <tr>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.department || '-'}</td>
+                    <td><span class="badge badge-${user.type === 'admin' ? 'primary' : 'info'}">${user.type}</span></td>
+                    <td><span class="badge badge-${user.status === 'active' ? 'success' : 'error'}">${user.status}</span></td>
+                    <td>${new Date(user.createdAt).toLocaleDateString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function generateSuppliersReport() {
+            const suppliers = JSON.parse(localStorage.getItem('suppliers') || '[]');
+            
+            const headers = ['Supplier Name', 'Contact Person', 'Category', 'Email', 'Phone', 'Status'];
+            const tableHead = document.getElementById('reportTableHead');
+            const tableBody = document.getElementById('reportTableBody');
+            
+            tableHead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
+            
+            tableBody.innerHTML = suppliers.map(supplier => `
+                <tr>
+                    <td>${supplier.name}</td>
+                    <td>${supplier.contactPerson}</td>
+                    <td>${supplier.category}</td>
+                    <td>${supplier.email}</td>
+                    <td>${supplier.phone}</td>
+                    <td><span class="badge badge-${supplier.status === 'active' ? 'success' : 'error'}">${supplier.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function loadAuditLog() {
+            const auditLog = JSON.parse(localStorage.getItem('auditLog') || '[]');
+            const tbody = document.getElementById('auditLogBody');
+            
+            if (auditLog.length === 0) {
+                // Generate sample audit log
+                const sampleLog = [
+                    {
+                        timestamp: new Date().toISOString(),
+                        user: 'Admin',
+                        action: 'CREATE',
+                        resource: 'Inventory Item',
+                        details: 'Added new item: A4 Paper'
+                    },
+                    {
+                        timestamp: new Date(Date.now() - 3600000).toISOString(),
+                        user: 'John Doe',
+                        action: 'UPDATE',
+                        resource: 'Request',
+                        details: 'Updated request status to approved'
+                    }
+                ];
+                localStorage.setItem('auditLog', JSON.stringify(sampleLog));
+            }
+            
+            const logs = JSON.parse(localStorage.getItem('auditLog') || '[]');
+            tbody.innerHTML = logs.slice(-20).reverse().map(log => `
+                <tr>
+                    <td>${new Date(log.timestamp).toLocaleString()}</td>
+                    <td>${log.user}</td>
+                    <td><span class="badge badge-info">${log.action}</span></td>
+                    <td>${log.resource}</td>
+                    <td>${log.details}</td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'approved': return 'success';
+                case 'rejected': return 'error';
+                case 'pending': return 'warning';
+                default: return 'info';
+            }
+        }
+
+        function exportToExcel() {
+            const table = document.getElementById('reportTable');
+            const csv = Array.from(table.rows).map(row => 
+                Array.from(row.cells).map(cell => cell.textContent).join(',')
+            ).join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'report.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportToPDF() {
+            window.print();
+        }
+
+        function printReport() {
+            const printWindow = window.open('', '_blank');
+            const reportContent = document.getElementById('reportContent').innerHTML;
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>CHUGAZY STATIONERY Report</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; }
+                            table { width: 100%; border-collapse: collapse; }
+                            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                            th { background-color: #f2f2f2; }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>CHUGAZY STATIONERY Report</h1>
+                        <p>Generated on: ${new Date().toLocaleString()}</p>
+                        ${reportContent}
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function resetFilters() {
+            document.getElementById('dateRange').value = '30';
+            document.getElementById('reportType').value = 'all';
+            document.getElementById('departmentFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            applyFilters();
+        }
+
+        function exportAllReports() {
+            // Export all reports as a zip file (simulation)
+            notificationManager.addNotification('Export Started', 'All reports are being exported...', 'info');
+            
+            setTimeout(() => {
+                notificationManager.addNotification('Export Complete', 'All reports have been exported successfully', 'success');
+            }, 3000);
+        }
+
+        function generateReport() {
+            notificationManager.addNotification('Report Generated', 'Custom report has been generated successfully', 'success');
+            applyFilters();
+        }
+    </script>
+
+    <style>
+        .stat-change {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: var(--space-xs);
+        }
+        
+        .stat-change.positive {
+            color: var(--success);
+        }
+        
+        .stat-change.negative {
+            color: var(--error);
+        }
+        
+        @media print {
+            .navbar, .dashboard-header, .btn { display: none !important; }
+            .card { box-shadow: none; border: 1px solid #ddd; }
+        }
+    </style>
+</body>
+</html>

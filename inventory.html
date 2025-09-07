@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management - Stationery Management System</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="admin-dashboard.html" class="nav-brand">📝 StationeryMS Admin</a>
+            <ul class="nav-menu">
+                <li><a href="admin-dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="inventory.html" class="nav-link active">Inventory</a></li>
+                <li><a href="requests.html" class="nav-link">Requests</a></li>
+                <li><a href="user-management.html" class="nav-link">Users</a></li>
+                <li><a href="suppliers.html" class="nav-link">Suppliers</a></li>
+                <li><a href="reports.html" class="nav-link">Reports</a></li>
+                <li><a href="services-management.html" class="nav-link">Services</a></li>
+            </ul>
+            <div class="flex">
+                <span class="text-muted">Admin: <span data-user-name>Admin</span></span>
+                <button data-theme-toggle class="btn btn-secondary">🌙</button>
+                <button data-logout class="btn btn-outline">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="dashboard-header">
+        <div class="container">
+            <div class="flex-between">
+                <div>
+                    <h1>Inventory Management</h1>
+                    <p class="text-muted">Manage stationery items, stock levels, and suppliers</p>
+                </div>
+                <button data-modal-target="addItemModal" class="btn btn-primary">
+                    ➕ Add New Item
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Filters and Search -->
+        <div class="card mb-xl">
+            <div class="flex-between">
+                <div class="flex">
+                    <input type="text" id="searchInput" class="form-input" placeholder="Search items..." style="width: 300px;">
+                    <select id="categoryFilter" class="form-select" style="width: 200px;">
+                        <option value="">All Categories</option>
+                        <option value="Paper">Paper</option>
+                        <option value="Writing">Writing Instruments</option>
+                        <option value="Office Tools">Office Tools</option>
+                        <option value="Filing">Filing & Storage</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Art Supplies">Art Supplies</option>
+                    </select>
+                    <select id="stockFilter" class="form-select" style="width: 200px;">
+                        <option value="">All Stock Levels</option>
+                        <option value="low">Low Stock</option>
+                        <option value="normal">Normal Stock</option>
+                        <option value="high">High Stock</option>
+                    </select>
+                </div>
+                <div class="flex">
+                    <button class="btn btn-outline" onclick="exportInventory()">📊 Export</button>
+                    <button class="btn btn-secondary" onclick="refreshInventory()">🔄 Refresh</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Table -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Inventory Items</h3>
+            </div>
+            <div class="table-container">
+                <table class="table" id="inventoryTable">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Category</th>
+                            <th>Current Stock</th>
+                            <th>Min Stock</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Item Modal -->
+    <div id="addItemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Item</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="addItemForm">
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Item Name</label>
+                        <input type="text" name="name" class="form-input" required placeholder="Enter item name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select name="category" class="form-select" required>
+                            <option value="">Select Category</option>
+                            <option value="Paper">Paper</option>
+                            <option value="Writing">Writing Instruments</option>
+                            <option value="Office Tools">Office Tools</option>
+                            <option value="Filing">Filing & Storage</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Art Supplies">Art Supplies</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-3">
+                    <div class="form-group">
+                        <label class="form-label">Current Stock</label>
+                        <input type="number" name="stock" class="form-input" required min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Minimum Stock</label>
+                        <input type="number" name="minStock" class="form-input" required min="1" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Price (TSh)</label>
+                        <input type="number" name="price" class="form-input" required min="0" step="1" value="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description (Optional)</label>
+                    <textarea name="description" class="form-textarea" placeholder="Item description..."></textarea>
+                </div>
+                <div class="flex" style="justify-content: flex-end; gap: 1rem;">
+                    <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Item Modal -->
+    <div id="editItemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Item</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="editItemForm">
+                <input type="hidden" name="id" id="editItemId">
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Item Name</label>
+                        <input type="text" name="name" class="form-input" required id="editItemName">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select name="category" class="form-select" required id="editItemCategory">
+                            <option value="">Select Category</option>
+                            <option value="Paper">Paper</option>
+                            <option value="Writing">Writing Instruments</option>
+                            <option value="Office Tools">Office Tools</option>
+                            <option value="Filing">Filing & Storage</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Art Supplies">Art Supplies</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-3">
+                    <div class="form-group">
+                        <label class="form-label">Current Stock</label>
+                        <input type="number" name="stock" class="form-input" required min="0" id="editItemStock">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Minimum Stock</label>
+                        <input type="number" name="minStock" class="form-input" required min="1" id="editItemMinStock">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Price (TSh)</label>
+                        <input type="number" name="price" class="form-input" required min="0" step="1" id="editItemPrice">
+                    </div>
+                </div>
+                <div class="flex" style="justify-content: flex-end; gap: 1rem;">
+                    <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script>
+        let inventory = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadInventory();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Search and filter
+            document.getElementById('searchInput').addEventListener('input', filterInventory);
+            document.getElementById('categoryFilter').addEventListener('change', filterInventory);
+            document.getElementById('stockFilter').addEventListener('change', filterInventory);
+
+            // Add item form
+            document.getElementById('addItemForm').addEventListener('submit', handleAddItem);
+            document.getElementById('editItemForm').addEventListener('submit', handleEditItem);
+        }
+
+        function loadInventory() {
+            inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
+            renderInventory(inventory);
+        }
+
+        function renderInventory(items) {
+            const tbody = document.getElementById('inventoryTableBody');
+            
+            if (items.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No items found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = items.map(item => `
+                <tr>
+                    <td style="font-weight: 500;">${item.name}</td>
+                    <td>${item.category}</td>
+                    <td>${item.stock}</td>
+                    <td>${item.minStock}</td>
+                    <td>TSh ${item.price.toLocaleString()}</td>
+                    <td>${getStockStatus(item)}</td>
+                    <td>
+                        <div class="flex" style="gap: 0.5rem;">
+                            <button class="btn btn-sm btn-outline" onclick="editItem('${item.id}')">Edit</button>
+                            <button class="btn btn-sm btn-error" onclick="deleteItem('${item.id}')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStockStatus(item) {
+            if (item.stock <= item.minStock) {
+                return '<span class="badge badge-error">Low Stock</span>';
+            } else if (item.stock <= item.minStock * 2) {
+                return '<span class="badge badge-warning">Medium</span>';
+            } else {
+                return '<span class="badge badge-success">Good</span>';
+            }
+        }
+
+        function filterInventory() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const stockLevel = document.getElementById('stockFilter').value;
+
+            let filtered = inventory.filter(item => {
+                const matchesSearch = item.name.toLowerCase().includes(search) || 
+                                    item.category.toLowerCase().includes(search);
+                const matchesCategory = !category || item.category === category;
+                
+                let matchesStock = true;
+                if (stockLevel === 'low') {
+                    matchesStock = item.stock <= item.minStock;
+                } else if (stockLevel === 'normal') {
+                    matchesStock = item.stock > item.minStock && item.stock <= item.minStock * 2;
+                } else if (stockLevel === 'high') {
+                    matchesStock = item.stock > item.minStock * 2;
+                }
+
+                return matchesSearch && matchesCategory && matchesStock;
+            });
+
+            renderInventory(filtered);
+        }
+
+        function handleAddItem(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            const newItem = {
+                id: Date.now().toString(),
+                name: formData.get('name'),
+                category: formData.get('category'),
+                stock: parseInt(formData.get('stock')),
+                minStock: parseInt(formData.get('minStock')),
+                price: parseFloat(formData.get('price')),
+                description: formData.get('description') || '',
+                createdAt: new Date().toISOString()
+            };
+
+            inventory.push(newItem);
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            
+            renderInventory(inventory);
+            e.target.reset();
+            document.querySelector('.modal.active').classList.remove('active');
+            
+            // Show notification
+            if (window.app) {
+                window.app.showNotification('Item added successfully!', 'success');
+            }
+        }
+
+        function editItem(id) {
+            const item = inventory.find(i => i.id === id);
+            if (!item) return;
+
+            // Populate edit form
+            document.getElementById('editItemId').value = item.id;
+            document.getElementById('editItemName').value = item.name;
+            document.getElementById('editItemCategory').value = item.category;
+            document.getElementById('editItemStock').value = item.stock;
+            document.getElementById('editItemMinStock').value = item.minStock;
+            document.getElementById('editItemPrice').value = item.price;
+
+            // Open modal
+            document.getElementById('editItemModal').classList.add('active');
+        }
+
+        function handleEditItem(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const id = formData.get('id');
+
+            const itemIndex = inventory.findIndex(i => i.id === id);
+            if (itemIndex === -1) return;
+
+            inventory[itemIndex] = {
+                ...inventory[itemIndex],
+                name: formData.get('name'),
+                category: formData.get('category'),
+                stock: parseInt(formData.get('stock')),
+                minStock: parseInt(formData.get('minStock')),
+                price: parseFloat(formData.get('price')),
+                updatedAt: new Date().toISOString()
+            };
+
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            renderInventory(inventory);
+            
+            document.querySelector('.modal.active').classList.remove('active');
+            
+            if (window.app) {
+                window.app.showNotification('Item updated successfully!', 'success');
+            }
+        }
+
+        function deleteItem(id) {
+            if (!confirm('Are you sure you want to delete this item?')) return;
+
+            inventory = inventory.filter(i => i.id !== id);
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            renderInventory(inventory);
+            
+            if (window.app) {
+                window.app.showNotification('Item deleted successfully!', 'success');
+            }
+        }
+
+        function refreshInventory() {
+            loadInventory();
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('stockFilter').value = '';
+        }
+
+        function exportInventory() {
+            const csv = [
+                ['Name', 'Category', 'Stock', 'Min Stock', 'Price', 'Status'],
+                ...inventory.map(item => [
+                    item.name,
+                    item.category,
+                    item.stock,
+                    item.minStock,
+                    item.price,
+                    item.stock <= item.minStock ? 'Low Stock' : 'Good'
+                ])
+            ].map(row => row.join(',')).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'inventory.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

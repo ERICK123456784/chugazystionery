@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajira Portal - CHUGAZY STATIONERY</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="user-dashboard.html" class="nav-brand">📝 CHUGAZY STATIONERY</a>
+            <ul class="nav-menu">
+                <li><a href="user-dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="catalog.html" class="nav-link">Catalog</a></li>
+                <li><a href="#" class="nav-link" onclick="toggleServicesMenu()">Services ▼</a></li>
+                <li><a href="profile.html" class="nav-link">Profile</a></li>
+            </ul>
+            <div class="flex">
+                <span class="text-muted">Welcome, <span data-user-name>User</span></span>
+                <button data-theme-toggle class="btn btn-secondary">🌙</button>
+                <button data-logout class="btn btn-outline">Logout</button>
+            </div>
+            <div id="servicesDropdown" class="services-dropdown hidden">
+                <a href="loan-application.html">💰 Loan Application</a>
+                <a href="ajira-portal.html">💼 Job Portal</a>
+                <a href="software-installation.html">💻 Software Installation</a>
+                <a href="online-classes.html">🎓 Online Classes</a>
+                <a href="computer-shop.html">🖥️ Computer Shop</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" style="min-height: 300px;">
+        <div class="container text-center hero-content">
+            <h1 class="fade-in">💼 Ajira Portal</h1>
+            <p class="fade-in">Connecting talent with opportunities</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="card mb-xl">
+            <div class="flex-between">
+                <h2>Available Jobs</h2>
+                <button class="btn btn-error">Post a Job</button>
+            </div>
+        </div>
+
+        <div class="grid grid-2">
+            <div class="card">
+                <h3>Software Developer</h3>
+                <p class="text-muted">Full-time • Remote</p>
+                <p>Looking for experienced developer with JavaScript, React, and Node.js skills.</p>
+                <div class="flex-between">
+                    <span class="badge badge-success">$60,000/year</span>
+                    <button class="btn btn-error btn-sm" data-modal-target="jobApplicationModal" onclick="openJobApplication(this)">Apply Now</button>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Office Manager</h3>
+                <p class="text-muted">Full-time • On-site</p>
+                <p>Manage daily office operations and coordinate with different departments.</p>
+                <div class="flex-between">
+                    <span class="badge badge-success">$45,000/year</span>
+                    <button class="btn btn-error btn-sm">Apply Now</button>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Marketing Specialist</h3>
+                <p class="text-muted">Part-time • Hybrid</p>
+                <p>Create and execute marketing campaigns across digital platforms.</p>
+                <div class="flex-between">
+                    <span class="badge badge-success">$35,000/year</span>
+                    <button class="btn btn-error btn-sm">Apply Now</button>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Data Analyst</h3>
+                <p class="text-muted">Full-time • Remote</p>
+                <p>Analyze business data and provide insights for decision making.</p>
+                <div class="flex-between">
+                    <span class="badge badge-success">$55,000/year</span>
+                    <button class="btn btn-error btn-sm">Apply Now</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Applications -->
+        <div class="card mt-xl">
+            <div class="card-header">
+                <h3>My Applications</h3>
+            </div>
+            <div id="myApplications">
+                <p class="text-muted">Loading applications...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Job Application Modal -->
+    <div id="jobApplicationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Apply for: <span id="selectedJobTitle">Job Position</span></h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form onsubmit="submitJobApplication(event)">
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" name="phone" class="form-input" required placeholder="Your phone number">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Years of Experience</label>
+                        <select name="experience" class="form-select" required>
+                            <option value="">Select Experience</option>
+                            <option value="0-1">0-1 years</option>
+                            <option value="2-3">2-3 years</option>
+                            <option value="4-5">4-5 years</option>
+                            <option value="6+">6+ years</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Education</label>
+                    <select name="education" class="form-select" required>
+                        <option value="">Select Education Level</option>
+                        <option value="High School">High School</option>
+                        <option value="Associate Degree">Associate Degree</option>
+                        <option value="Bachelor's Degree">Bachelor's Degree</option>
+                        <option value="Master's Degree">Master's Degree</option>
+                        <option value="PhD">PhD</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Key Skills</label>
+                    <input type="text" name="skills" class="form-input" required placeholder="e.g., JavaScript, React, Node.js">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Availability</label>
+                    <select name="availability" class="form-select" required>
+                        <option value="">Select Availability</option>
+                        <option value="Immediate">Immediate</option>
+                        <option value="2 weeks">2 weeks notice</option>
+                        <option value="1 month">1 month notice</option>
+                        <option value="Flexible">Flexible</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cover Letter</label>
+                    <textarea name="coverLetter" class="form-textarea" required placeholder="Tell us why you're perfect for this role..."></textarea>
+                </div>
+                <div class="flex" style="justify-content: flex-end; gap: 1rem;">
+                    <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                    <button type="submit" class="btn btn-error">Submit Application</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script>
+        function toggleServicesMenu() {
+            const dropdown = document.getElementById('servicesDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('servicesDropdown');
+            const servicesLink = e.target.closest('[onclick="toggleServicesMenu()"]');
+            if (!servicesLink && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMyApplications();
+        });
+
+        function loadMyApplications() {
+            if (!auth.isAuthenticated()) return;
+            
+            const container = document.getElementById('myApplications');
+            const serviceApps = JSON.parse(localStorage.getItem('serviceApplications') || '[]');
+            const myJobApps = serviceApps.filter(app => app.serviceType === 'job' && app.userId === auth.currentUser.id);
+
+            if (myJobApps.length === 0) {
+                container.innerHTML = '<p class="text-muted">No applications submitted yet</p>';
+                return;
+            }
+
+            container.innerHTML = myJobApps.map(app => `
+                <div class="card" style="margin-bottom: 1rem;">
+                    <div class="flex-between">
+                        <div>
+                            <h4>${app.jobTitle}</h4>
+                            <p class="text-muted">Applied: ${new Date(app.applicationDate).toLocaleDateString()}</p>
+                            <p class="text-muted">Experience: ${app.experience} | Education: ${app.education}</p>
+                        </div>
+                        <div class="text-center">
+                            <span class="badge badge-${getStatusColor(app.status)}">${app.status}</span>
+                            ${app.feedback ? `<p class="text-muted mt-sm" style="font-size: 0.875rem;"><strong>Feedback:</strong> ${app.feedback}</p>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'approved': return 'success';
+                case 'rejected': return 'error';
+                case 'pending': return 'warning';
+                default: return 'info';
+            }
+        }
+
+        let selectedJob = null;
+
+        function openJobApplication(button) {
+            if (!auth.isAuthenticated()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const jobCard = button.closest('.card');
+            selectedJob = {
+                title: jobCard.querySelector('h3').textContent,
+                type: jobCard.querySelector('.text-muted').textContent,
+                salary: jobCard.querySelector('.badge').textContent
+            };
+
+            document.getElementById('selectedJobTitle').textContent = selectedJob.title;
+            document.getElementById('jobApplicationModal').classList.add('active');
+        }
+
+        function submitJobApplication(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            const jobApplication = {
+                id: Date.now().toString(),
+                userId: auth.currentUser.id,
+                userName: auth.currentUser.name,
+                userEmail: auth.currentUser.email,
+                jobTitle: selectedJob.title,
+                jobType: selectedJob.type,
+                salary: selectedJob.salary,
+                phone: formData.get('phone'),
+                experience: formData.get('experience'),
+                education: formData.get('education'),
+                skills: formData.get('skills'),
+                coverLetter: formData.get('coverLetter'),
+                availability: formData.get('availability'),
+                status: 'pending',
+                serviceType: 'job',
+                applicationDate: new Date().toISOString(),
+                feedback: ''
+            };
+
+            const serviceApps = JSON.parse(localStorage.getItem('serviceApplications') || '[]');
+            serviceApps.push(jobApplication);
+            localStorage.setItem('serviceApplications', JSON.stringify(serviceApps));
+
+            alert('Job application submitted successfully! You will receive feedback within 3-5 business days.');
+            e.target.reset();
+            document.getElementById('jobApplicationModal').classList.remove('active');
+        }
+    </script>
+</body>
+</html>

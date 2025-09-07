@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - CHUGAZY STATIONERY</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="admin-dashboard.html" class="nav-brand">📝 CHUGAZY STATIONERY Admin</a>
+            <ul class="nav-menu">
+                <li><a href="admin-dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="inventory.html" class="nav-link">Inventory</a></li>
+                <li><a href="requests.html" class="nav-link">Requests</a></li>
+                <li><a href="user-management.html" class="nav-link active">Users</a></li>
+                <li><a href="suppliers.html" class="nav-link">Suppliers</a></li>
+                <li><a href="reports.html" class="nav-link">Reports</a></li>
+                <li><a href="services-management.html" class="nav-link">Services</a></li>
+            </ul>
+            <div class="flex">
+                <span class="text-muted">Admin: <span data-user-name>Admin</span></span>
+                <button data-theme-toggle class="btn btn-secondary">🌙</button>
+                <button data-logout class="btn btn-outline">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="dashboard-header">
+        <div class="container">
+            <h1>User Management</h1>
+            <p class="text-muted">Manage user accounts and permissions</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="card mb-xl">
+            <div class="flex-between">
+                <div class="flex">
+                    <input type="text" id="searchInput" class="form-input" placeholder="Search users..." style="width: 300px;">
+                    <select id="departmentFilter" class="form-select" style="width: 200px;">
+                        <option value="">All Departments</option>
+                        <option value="IT">IT</option>
+                        <option value="HR">HR</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Operations">Operations</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                    <select id="statusFilter" class="form-select" style="width: 200px;">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <button class="btn btn-outline" onclick="exportUsers()">📊 Export</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>All Users</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Department</th>
+                            <th>Phone</th>
+                            <th>Joined</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div id="userDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>User Details</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div id="userDetailContent">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script>
+        let users = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUsers();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', filterUsers);
+            document.getElementById('departmentFilter').addEventListener('change', filterUsers);
+            document.getElementById('statusFilter').addEventListener('change', filterUsers);
+        }
+
+        function loadUsers() {
+            const allUsers = auth.getUsers();
+            users = allUsers.filter(user => user.type === 'user');
+            renderUsers(users);
+        }
+
+        function renderUsers(userList) {
+            const tbody = document.getElementById('usersTableBody');
+            
+            if (userList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No users found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = userList.map(user => `
+                <tr>
+                    <td style="font-weight: 500;">${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.department || 'N/A'}</td>
+                    <td>${user.phone || 'N/A'}</td>
+                    <td>${new Date(user.createdAt).toLocaleDateString()}</td>
+                    <td><span class="badge badge-${user.status === 'active' ? 'success' : 'error'}">${user.status}</span></td>
+                    <td>
+                        <div class="flex" style="gap: 0.5rem;">
+                            <button class="btn btn-sm btn-outline" onclick="viewUser('${user.id}')">View</button>
+                            <button class="btn btn-sm ${user.status === 'active' ? 'btn-warning' : 'btn-success'}" 
+                                    onclick="toggleUserStatus('${user.id}')">
+                                ${user.status === 'active' ? 'Disable' : 'Enable'}
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterUsers() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const department = document.getElementById('departmentFilter').value;
+            const status = document.getElementById('statusFilter').value;
+
+            const filtered = users.filter(user => {
+                const matchesSearch = user.name.toLowerCase().includes(search) || 
+                                    user.email.toLowerCase().includes(search);
+                const matchesDepartment = !department || user.department === department;
+                const matchesStatus = !status || user.status === status;
+                return matchesSearch && matchesDepartment && matchesStatus;
+            });
+
+            renderUsers(filtered);
+        }
+
+        function viewUser(id) {
+            const user = users.find(u => u.id === id);
+            if (!user) return;
+
+            // Get user's requests
+            const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+            const userRequests = requests.filter(r => r.userId === id);
+
+            const content = document.getElementById('userDetailContent');
+            content.innerHTML = `
+                <div class="grid grid-2" style="gap: 2rem;">
+                    <div>
+                        <h4>Personal Information</h4>
+                        <p><strong>Name:</strong> ${user.name}</p>
+                        <p><strong>Email:</strong> ${user.email}</p>
+                        <p><strong>Department:</strong> ${user.department || 'N/A'}</p>
+                        <p><strong>Phone:</strong> ${user.phone || 'N/A'}</p>
+                        <p><strong>Status:</strong> <span class="badge badge-${user.status === 'active' ? 'success' : 'error'}">${user.status}</span></p>
+                        <p><strong>Joined:</strong> ${new Date(user.createdAt).toLocaleDateString()}</p>
+                    </div>
+                    <div>
+                        <h4>Request Statistics</h4>
+                        <p><strong>Total Requests:</strong> ${userRequests.length}</p>
+                        <p><strong>Pending:</strong> ${userRequests.filter(r => r.status === 'pending').length}</p>
+                        <p><strong>Approved:</strong> ${userRequests.filter(r => r.status === 'approved').length}</p>
+                        <p><strong>Rejected:</strong> ${userRequests.filter(r => r.status === 'rejected').length}</p>
+                    </div>
+                </div>
+                
+                ${userRequests.length > 0 ? `
+                    <div style="margin-top: 2rem;">
+                        <h4>Recent Requests</h4>
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Quantity</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${userRequests.slice(-5).reverse().map(request => `
+                                        <tr>
+                                            <td>${request.itemName}</td>
+                                            <td>${request.quantity}</td>
+                                            <td>${new Date(request.requestDate).toLocaleDateString()}</td>
+                                            <td><span class="badge badge-${getStatusColor(request.status)}">${request.status}</span></td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('userDetailModal').classList.add('active');
+        }
+
+        function toggleUserStatus(id) {
+            const allUsers = auth.getUsers();
+            const userIndex = allUsers.findIndex(u => u.id === id);
+            
+            if (userIndex === -1) return;
+
+            const newStatus = allUsers[userIndex].status === 'active' ? 'inactive' : 'active';
+            allUsers[userIndex].status = newStatus;
+            allUsers[userIndex].updatedAt = new Date().toISOString();
+            
+            localStorage.setItem('users', JSON.stringify(allUsers));
+            loadUsers();
+            
+            if (window.app) {
+                window.app.showNotification(`User ${newStatus === 'active' ? 'enabled' : 'disabled'} successfully!`, 'success');
+            }
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'approved': return 'success';
+                case 'rejected': return 'error';
+                case 'pending': return 'warning';
+                default: return 'info';
+            }
+        }
+
+        function exportUsers() {
+            const csv = [
+                ['Name', 'Email', 'Department', 'Phone', 'Joined', 'Status'],
+                ...users.map(user => [
+                    user.name,
+                    user.email,
+                    user.department || 'N/A',
+                    user.phone || 'N/A',
+                    new Date(user.createdAt).toLocaleDateString(),
+                    user.status
+                ])
+            ].map(row => row.join(',')).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'users.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

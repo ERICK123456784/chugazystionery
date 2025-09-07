@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requests Management - CHUGAZY STATIONERY</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="admin-dashboard.html" class="nav-brand">📝 CHUGAZY STATIONERY Admin</a>
+            <ul class="nav-menu">
+                <li><a href="admin-dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="inventory.html" class="nav-link">Inventory</a></li>
+                <li><a href="requests.html" class="nav-link active">Requests</a></li>
+                <li><a href="user-management.html" class="nav-link">Users</a></li>
+                <li><a href="suppliers.html" class="nav-link">Suppliers</a></li>
+                <li><a href="reports.html" class="nav-link">Reports</a></li>
+                <li><a href="services-management.html" class="nav-link">Services</a></li>
+            </ul>
+            <div class="flex">
+                <span class="text-muted">Admin: <span data-user-name>Admin</span></span>
+                <button data-theme-toggle class="btn btn-secondary">🌙</button>
+                <button data-logout class="btn btn-outline">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="dashboard-header">
+        <div class="container">
+            <h1>Requests Management</h1>
+            <p class="text-muted">Review, approve, and manage stationery requests</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="card mb-xl">
+            <div class="flex-between">
+                <div class="flex">
+                    <input type="text" id="searchInput" class="form-input" placeholder="Search requests..." style="width: 300px;">
+                    <select id="statusFilter" class="form-select" style="width: 200px;">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                    <select id="urgencyFilter" class="form-select" style="width: 200px;">
+                        <option value="">All Urgency</option>
+                        <option value="urgent">Urgent</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <button class="btn btn-outline" onclick="exportRequests()">📊 Export</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>All Requests</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Request ID</th>
+                            <th>User</th>
+                            <th>Item</th>
+                            <th>Quantity</th>
+                            <th>Urgency</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requestsTableBody">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div id="requestDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Request Details</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div id="requestDetailContent">
+                <!-- Dynamic content -->
+            </div>
+            <div class="flex" style="justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+                <button class="btn btn-error" onclick="updateRequestStatus('rejected')">Reject</button>
+                <button class="btn btn-success" onclick="updateRequestStatus('approved')">Approve</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script>
+        let requests = [];
+        let currentRequestId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRequests();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', filterRequests);
+            document.getElementById('statusFilter').addEventListener('change', filterRequests);
+            document.getElementById('urgencyFilter').addEventListener('change', filterRequests);
+        }
+
+        function loadRequests() {
+            requests = JSON.parse(localStorage.getItem('requests') || '[]');
+            renderRequests(requests);
+        }
+
+        function renderRequests(requestList) {
+            const tbody = document.getElementById('requestsTableBody');
+            
+            if (requestList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">No requests found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = requestList.map(request => `
+                <tr>
+                    <td>#${request.id.slice(-6)}</td>
+                    <td>${request.userName}</td>
+                    <td>${request.itemName}</td>
+                    <td>${request.quantity}</td>
+                    <td><span class="badge badge-${getUrgencyColor(request.urgency)}">${request.urgency}</span></td>
+                    <td>${new Date(request.requestDate).toLocaleDateString()}</td>
+                    <td><span class="badge badge-${getStatusColor(request.status)}">${request.status}</span></td>
+                    <td>
+                        <div class="flex" style="gap: 0.5rem;">
+                            <button class="btn btn-sm btn-outline" onclick="viewRequest('${request.id}')">View</button>
+                            ${request.status === 'pending' ? `
+                                <button class="btn btn-sm btn-success" onclick="quickApprove('${request.id}')">Approve</button>
+                                <button class="btn btn-sm btn-error" onclick="quickReject('${request.id}')">Reject</button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'approved': return 'success';
+                case 'rejected': return 'error';
+                case 'pending': return 'warning';
+                default: return 'info';
+            }
+        }
+
+        function getUrgencyColor(urgency) {
+            switch (urgency) {
+                case 'urgent': return 'error';
+                case 'high': return 'warning';
+                case 'medium': return 'info';
+                case 'low': return 'success';
+                default: return 'info';
+            }
+        }
+
+        function filterRequests() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            const urgency = document.getElementById('urgencyFilter').value;
+
+            const filtered = requests.filter(request => {
+                const matchesSearch = request.itemName.toLowerCase().includes(search) || 
+                                    request.userName.toLowerCase().includes(search);
+                const matchesStatus = !status || request.status === status;
+                const matchesUrgency = !urgency || request.urgency === urgency;
+                return matchesSearch && matchesStatus && matchesUrgency;
+            });
+
+            renderRequests(filtered);
+        }
+
+        function viewRequest(id) {
+            const request = requests.find(r => r.id === id);
+            if (!request) return;
+
+            currentRequestId = id;
+            
+            const content = document.getElementById('requestDetailContent');
+            content.innerHTML = `
+                <div class="grid grid-2" style="gap: 2rem;">
+                    <div>
+                        <h4>Request Information</h4>
+                        <p><strong>Request ID:</strong> #${request.id.slice(-6)}</p>
+                        <p><strong>Item:</strong> ${request.itemName}</p>
+                        <p><strong>Category:</strong> ${request.category}</p>
+                        <p><strong>Quantity:</strong> ${request.quantity}</p>
+                        <p><strong>Urgency:</strong> <span class="badge badge-${getUrgencyColor(request.urgency)}">${request.urgency}</span></p>
+                        <p><strong>Status:</strong> <span class="badge badge-${getStatusColor(request.status)}">${request.status}</span></p>
+                    </div>
+                    <div>
+                        <h4>User Information</h4>
+                        <p><strong>Name:</strong> ${request.userName}</p>
+                        <p><strong>Request Date:</strong> ${new Date(request.requestDate).toLocaleString()}</p>
+                        ${request.description ? `<p><strong>Description:</strong> ${request.description}</p>` : ''}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('requestDetailModal').classList.add('active');
+        }
+
+        function quickApprove(id) {
+            updateStatus(id, 'approved');
+        }
+
+        function quickReject(id) {
+            updateStatus(id, 'rejected');
+        }
+
+        function updateRequestStatus(status) {
+            if (currentRequestId) {
+                updateStatus(currentRequestId, status);
+                document.querySelector('.modal.active').classList.remove('active');
+            }
+        }
+
+        function updateStatus(id, status) {
+            const requestIndex = requests.findIndex(r => r.id === id);
+            if (requestIndex === -1) return;
+
+            requests[requestIndex].status = status;
+            requests[requestIndex].updatedAt = new Date().toISOString();
+            
+            localStorage.setItem('requests', JSON.stringify(requests));
+            renderRequests(requests);
+            
+            if (window.app) {
+                window.app.showNotification(`Request ${status} successfully!`, 'success');
+            }
+        }
+
+        function exportRequests() {
+            const csv = [
+                ['ID', 'User', 'Item', 'Quantity', 'Urgency', 'Date', 'Status'],
+                ...requests.map(request => [
+                    request.id.slice(-6),
+                    request.userName,
+                    request.itemName,
+                    request.quantity,
+                    request.urgency,
+                    new Date(request.requestDate).toLocaleDateString(),
+                    request.status
+                ])
+            ].map(row => row.join(',')).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'requests.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

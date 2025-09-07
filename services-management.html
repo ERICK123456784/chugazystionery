@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services Management - CHUGAZY STATIONERY</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="admin-dashboard.html" class="nav-brand">📝 CHUGAZY STATIONERY Admin</a>
+            <ul class="nav-menu">
+                <li><a href="admin-dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="inventory.html" class="nav-link">Inventory</a></li>
+                <li><a href="requests.html" class="nav-link">Requests</a></li>
+                <li><a href="user-management.html" class="nav-link">Users</a></li>
+                <li><a href="suppliers.html" class="nav-link">Suppliers</a></li>
+                <li><a href="reports.html" class="nav-link">Reports</a></li>
+                <li><a href="services-management.html" class="nav-link active">Services</a></li>
+            </ul>
+            <div class="flex">
+                <span class="text-muted">Admin: <span data-user-name>Admin</span></span>
+                <button data-theme-toggle class="btn btn-secondary">🌙</button>
+                <button data-logout class="btn btn-outline">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="dashboard-header">
+        <div class="container">
+            <h1>Services Management</h1>
+            <p class="text-muted">Monitor and manage all business services</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="stats-grid mb-xl">
+            <div class="stat-card">
+                <span class="stat-number" id="totalLoanApps">0</span>
+                <div class="stat-label">Loan Applications</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="totalJobApps">0</span>
+                <div class="stat-label">Job Applications</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="totalServiceReqs">0</span>
+                <div class="stat-label">Service Requests</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="totalEnrollments">0</span>
+                <div class="stat-label">Course Enrollments</div>
+            </div>
+        </div>
+
+        <div class="grid grid-2 mb-xl">
+            <div class="card">
+                <div class="card-header">
+                    <h3>💰 Loan Applications</h3>
+                </div>
+                <div id="loanApplications">
+                    <p class="text-muted">Loading applications...</p>
+                </div>
+                <div class="text-center mt-md">
+                    <button class="btn btn-warning btn-sm" onclick="exportData('loans')">Export CSV</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>💻 Service Requests</h3>
+                </div>
+                <div id="serviceRequests">
+                    <p class="text-muted">Loading requests...</p>
+                </div>
+                <div class="text-center mt-md">
+                    <button class="btn btn-primary btn-sm" onclick="exportData('services')">Export CSV</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-xl">
+            <div class="card-header">
+                <h3>Service Analytics</h3>
+            </div>
+            <div class="grid grid-3">
+                <div class="text-center">
+                    <div style="font-size: 3rem; color: var(--warning); margin-bottom: 1rem;">📊</div>
+                    <h4>Most Popular Service</h4>
+                    <p class="text-primary" id="popularService">Loan Applications</p>
+                </div>
+                <div class="text-center">
+                    <div style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;">⭐</div>
+                    <h4>Service Rating</h4>
+                    <p class="text-success">4.8/5.0</p>
+                </div>
+                <div class="text-center">
+                    <div style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;">📈</div>
+                    <h4>Growth Rate</h4>
+                    <p class="text-accent">+25% this month</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="flex-between">
+                    <h3>All Service Activities</h3>
+                    <div class="flex">
+                        <select id="serviceFilter" class="form-select" style="width: 200px;">
+                            <option value="">All Services</option>
+                            <option value="loan">Loan Applications</option>
+                            <option value="job">Job Portal</option>
+                            <option value="software">Software Installation</option>
+                            <option value="classes">Online Classes</option>
+                            <option value="shop">Computer Shop</option>
+                        </select>
+                        <button class="btn btn-outline" onclick="refreshData()">🔄 Refresh</button>
+                    </div>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>User</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="serviceActivities">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadServiceData();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('serviceFilter').addEventListener('change', filterServices);
+        }
+
+        function loadServiceData() {
+            // Load all service applications
+            const serviceApps = JSON.parse(localStorage.getItem('serviceApplications') || '[]');
+            
+            // Count by service type
+            const loanApps = serviceApps.filter(app => app.serviceType === 'loan');
+            const jobApps = serviceApps.filter(app => app.serviceType === 'job');
+            const softwareApps = serviceApps.filter(app => app.serviceType === 'software');
+            const classApps = serviceApps.filter(app => app.serviceType === 'classes');
+            const shopApps = serviceApps.filter(app => app.serviceType === 'shop');
+            
+            document.getElementById('totalLoanApps').textContent = loanApps.length;
+            document.getElementById('totalJobApps').textContent = jobApps.length;
+            document.getElementById('totalServiceReqs').textContent = softwareApps.length + shopApps.length;
+            document.getElementById('totalEnrollments').textContent = classApps.length;
+
+            loadServiceApplications(serviceApps);
+            loadServiceActivities(serviceApps);
+        }
+
+        function loadServiceApplications(serviceApps) {
+            const loanContainer = document.getElementById('loanApplications');
+            const serviceContainer = document.getElementById('serviceRequests');
+            
+            const loanApps = serviceApps.filter(app => app.serviceType === 'loan').slice(-5);
+            const otherApps = serviceApps.filter(app => app.serviceType !== 'loan').slice(-5);
+            
+            // Load loan applications
+            if (loanApps.length === 0) {
+                loanContainer.innerHTML = '<p class="text-muted">No loan applications</p>';
+            } else {
+                loanContainer.innerHTML = loanApps.map(loan => `
+                    <div class="flex-between" style="padding: 0.75rem 0; border-bottom: 1px solid var(--border);">
+                        <div>
+                            <div style="font-weight: 500;">${loan.userName}</div>
+                            <div class="text-muted" style="font-size: 0.875rem;">$${loan.amount || 'N/A'} • ${loan.purpose || loan.serviceType}</div>
+                        </div>
+                        <div class="flex" style="gap: 0.5rem;">
+                            <span class="badge badge-${getStatusColor(loan.status)}">${loan.status}</span>
+                            <button class="btn btn-sm btn-outline" onclick="viewApplicationDetails('${loan.id}')">View</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // Load other service requests
+            if (otherApps.length === 0) {
+                serviceContainer.innerHTML = '<p class="text-muted">No service requests</p>';
+            } else {
+                serviceContainer.innerHTML = otherApps.map(app => `
+                    <div class="flex-between" style="padding: 0.75rem 0; border-bottom: 1px solid var(--border);">
+                        <div>
+                            <div style="font-weight: 500;">${app.userName}</div>
+                            <div class="text-muted" style="font-size: 0.875rem;">${app.serviceType} • ${new Date(app.applicationDate).toLocaleDateString()}</div>
+                        </div>
+                        <div class="flex" style="gap: 0.5rem;">
+                            <span class="badge badge-${getStatusColor(app.status)}">${app.status}</span>
+                            <button class="btn btn-sm btn-outline" onclick="viewApplicationDetails('${app.id}')">View</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function loadServiceActivities(serviceApps) {
+            const tbody = document.getElementById('serviceActivities');
+            
+            if (serviceApps.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No service activities</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = serviceApps.map(app => {
+                const serviceNames = {
+                    'loan': 'Loan Application',
+                    'job': 'Job Application',
+                    'software': 'Software Installation',
+                    'classes': 'Online Classes',
+                    'shop': 'Computer Shop'
+                };
+                
+                return `
+                    <tr>
+                        <td>${serviceNames[app.serviceType] || app.serviceType}</td>
+                        <td>${app.userName}</td>
+                        <td>${app.purpose || app.jobTitle || app.course || app.category || 'General'}</td>
+                        <td>${new Date(app.applicationDate).toLocaleDateString()}</td>
+                        <td><span class="badge badge-${getStatusColor(app.status)}">${app.status}</span></td>
+                        <td>
+                            <div class="flex" style="gap: 0.5rem;">
+                                <button class="btn btn-sm btn-outline" onclick="viewApplicationDetails('${app.id}')">View</button>
+                                ${app.status === 'pending' ? `
+                                    <button class="btn btn-sm btn-success" onclick="approveApplication('${app.id}')">Approve</button>
+                                    <button class="btn btn-sm btn-error" onclick="rejectApplication('${app.id}')">Reject</button>
+                                ` : ''}
+                                <button class="btn btn-sm btn-outline" onclick="provideFeedback('${app.id}')">Feedback</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'approved': case 'enrolled': return 'success';
+                case 'rejected': return 'error';
+                case 'pending': return 'warning';
+                default: return 'info';
+            }
+        }
+
+        function viewApplicationDetails(id) {
+            const serviceApps = JSON.parse(localStorage.getItem('serviceApplications') || '[]');
+            const app = serviceApps.find(a => a.id === id);
+            if (app) {
+                if (app.serviceType === 'job') {
+                    openJobDetailModal(app);
+                } else {
+                    let details = `Application Details:\nApplicant: ${app.userName}\nEmail: ${app.userEmail}\nService: ${app.serviceType}\nStatus: ${app.status}\nDate: ${new Date(app.applicationDate).toLocaleDateString()}`;
+                    
+                    if (app.serviceType === 'loan') {
+                        details += `\nAmount: $${app.amount}\nPurpose: ${app.purpose}\nIncome: $${app.income}`;
+                    } else if (app.serviceType === 'software') {
+                        details += `\nSoftware: ${app.softwareType}\nService: ${app.serviceType}`;
+                    } else if (app.serviceType === 'classes') {
+                        details += `\nCourse: ${app.course}\nSchedule: ${app.schedule}`;
+                    } else if (app.serviceType === 'shop') {
+                        details += `\nCategory: ${app.category}\nBudget: ${app.budget}`;
+                    }
+                    
+                    alert(details);
+                }
+            }
+        }
+
+        function openJobDetailModal(app) {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Job Application Details</h3>
+                        <button class="modal-close" onclick="this.closest('.modal').remove()">&times;</button>
+                    </div>
+                    <div class="grid grid-2" style="gap: 2rem;">
+                        <div>
+                            <h4>Applicant Information</h4>
+                            <p><strong>Name:</strong> ${app.userName}</p>
+                            <p><strong>Email:</strong> ${app.userEmail}</p>
+                            <p><strong>Phone:</strong> ${app.phone}</p>
+                            <p><strong>Experience:</strong> ${app.experience}</p>
+                            <p><strong>Education:</strong> ${app.education}</p>
+                            <p><strong>Skills:</strong> ${app.skills}</p>
+                            <p><strong>Availability:</strong> ${app.availability}</p>
+                        </div>
+                        <div>
+                            <h4>Job Information</h4>
+                            <p><strong>Position:</strong> ${app.jobTitle}</p>
+                            <p><strong>Type:</strong> ${app.jobType}</p>
+                            <p><strong>Salary:</strong> ${app.salary}</p>
+                            <p><strong>Applied:</strong> ${new Date(app.applicationDate).toLocaleDateString()}</p>
+                            <p><strong>Status:</strong> <span class="badge badge-${getStatusColor(app.status)}">${app.status}</span></p>
+                        </div>
+                    </div>
+                    <div style="margin-top: 2rem;">
+                        <h4>Cover Letter</h4>
+                        <p style="background: var(--bg-secondary); padding: 1rem; border-radius: var(--radius-md);">${app.coverLetter}</p>
+                    </div>
+                    ${app.status === 'pending' ? `
+                        <div style="margin-top: 2rem;">
+                            <h4>Admin Actions</h4>
+                            <div class="form-group">
+                                <label class="form-label">Feedback</label>
+                                <textarea id="adminFeedback" class="form-textarea" placeholder="Provide feedback to the applicant..."></textarea>
+                            </div>
+                            <div class="flex" style="gap: 1rem;">
+                                <button class="btn btn-success" onclick="processJobApplication('${app.id}', 'approved')">Approve</button>
+                                <button class="btn btn-error" onclick="processJobApplication('${app.id}', 'rejected')">Reject</button>
+                            </div>
+                        </div>
+                    ` : app.feedback ? `
+                        <div style="margin-top: 2rem;">
+                            <h4>Admin Feedback</h4>
+                            <p style="background: var(--bg-secondary); padding: 1rem; border-radius: var(--radius-md);">${app.feedback}</p>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function processJobApplication(id, status) {
+            const feedback = document.getElementById('adminFeedback').value;
+            const serviceApps = JSON.parse(localStorage.getItem('serviceApplications') || '[]');
+            const appIndex = serviceApps.findIndex(a => a.id === id);
+            
+            if (appIndex !== -1) {
+                serviceApps[appIndex].status = status;
+                serviceApps[appIndex].feedback = feedback || (status === 'approved' ? 'Congratulations! Your application has been approved.' : 'Thank you for your interest. We have decided to move forward with other candidates.');
+                serviceApps[appIndex].processedDate = new Date().toISOString();
+                localStorage.setItem('serviceApplications', JSON.stringify(serviceApps));
+                
+                alert(`Application ${status} successfully!`);
+                document.querySelector('.modal').remove();
+                loadServiceData();
+            }
+        }
+
+        function viewServiceDetails(id, type) {
+            alert(`Service Details:\nID: ${id}\nType: ${type}\nClick to view full details`);
+        }
+
+        function approveApplication(id) {
+            const serviceApps = JSON.parse(localStorage.getItem('serviceApplications') || '[]');
+            const appIndex = serviceApps.findIndex(a => a.id === id);
+            if (appIndex !== -1) {
+                serviceApps[appIndex].status = 'approved';
+                localStorage.setItem('serviceApplications', JSON.stringify(serviceApps));
+            }
+            loadServiceData();
+            alert('Application approved successfully!');
+        }
+
+        function rejectApplication(id) {
+            const serviceApps = JSON.parse(localStorage.getItem('serviceApplications') || '[]');
+            const appIndex = serviceApps.findIndex(a => a.id === id);
+            if (appIndex !== -1) {
+                serviceApps[appIndex].status = 'rejected';
+                localStorage.setItem('serviceApplications', JSON.stringify(serviceApps));
+            }
+            loadServiceData();
+            alert('Application rejected.');
+        }
+
+        function filterServices() {
+            const filter = document.getElementById('serviceFilter').value;
+            const rows = document.querySelectorAll('#serviceActivities tr');
+            
+            rows.forEach(row => {
+                const service = row.cells[0]?.textContent.toLowerCase();
+                if (!filter || service.includes(filter)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function refreshData() {
+            loadServiceData();
+        }
+
+        function provideFeedback(id) {
+            const feedback = prompt('Enter feedback for this application:');
+            if (feedback) {
+                const serviceApps = JSON.parse(localStorage.getItem('serviceApplications') || '[]');
+                const appIndex = serviceApps.findIndex(a => a.id === id);
+                if (appIndex !== -1) {
+                    serviceApps[appIndex].feedback = feedback;
+                    serviceApps[appIndex].feedbackDate = new Date().toISOString();
+                    localStorage.setItem('serviceApplications', JSON.stringify(serviceApps));
+                    alert('Feedback provided successfully!');
+                    loadServiceData();
+                }
+            }
+        }
+
+        function exportData(type) {
+            let data = [];
+            let filename = '';
+            
+            if (type === 'loans') {
+                data = JSON.parse(localStorage.getItem('loanApplications') || '[]');
+                filename = 'loan-applications.csv';
+            } else if (type === 'services') {
+                data = JSON.parse(localStorage.getItem('serviceRequests') || '[]');
+                filename = 'service-requests.csv';
+            }
+            
+            if (data.length === 0) {
+                alert('No data to export');
+                return;
+            }
+            
+            const csv = [
+                Object.keys(data[0]),
+                ...data.map(item => Object.values(item))
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

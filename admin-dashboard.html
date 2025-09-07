@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Stationery Management System</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="admin-dashboard.html" class="nav-brand">📝 CHUGAZY Stationery M.S Admin</a>
+            <ul class="nav-menu">
+                <li><a href="admin-dashboard.html" class="nav-link active">Dashboard</a></li>
+                <li><a href="inventory.html" class="nav-link">Inventory</a></li>
+                <li><a href="requests.html" class="nav-link">Requests</a></li>
+                <li><a href="user-management.html" class="nav-link">Users</a></li>
+                <li><a href="suppliers.html" class="nav-link">Suppliers</a></li>
+                <li><a href="reports.html" class="nav-link">Reports</a></li>
+                <li><a href="services-management.html" class="nav-link">Services</a></li>
+            </ul>
+            <div class="flex">
+                <span class="text-muted">Admin: <span data-user-name>Admin</span></span>
+                <button data-theme-toggle class="btn btn-secondary">🌙</button>
+                <button data-logout class="btn btn-outline">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <section class="dashboard-header">
+        <div class="container">
+            <h1>Admin Dashboard</h1>
+            <p class="text-muted">Manage inventory, users, and requests efficiently</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Quick Actions -->
+        <div class="flex-between mb-xl">
+            <h2>Quick Actions</h2>
+            <div class="flex">
+                <a href="inventory.html" class="btn btn-primary">📦 Manage Inventory</a>
+                <a href="requests.html" class="btn btn-success">📋 View Requests</a>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid mb-xl">
+            <div class="stat-card">
+                <span class="stat-number" id="totalUsers">0</span>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="pendingRequests">0</span>
+                <div class="stat-label">Pending Requests</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="totalItems">0</span>
+                <div class="stat-label">Inventory Items</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="lowStock">0</span>
+                <div class="stat-label">Low Stock Items</div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="grid grid-2">
+            <!-- Recent Requests -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="flex-between">
+                        <h3>Recent Requests</h3>
+                        <a href="requests.html" class="btn btn-outline btn-sm">View All</a>
+                    </div>
+                </div>
+                <div id="recentRequests">
+                    <p class="text-muted">Loading requests...</p>
+                </div>
+            </div>
+
+            <!-- Service Applications -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="flex-between">
+                        <h3>Service Applications</h3>
+                        <a href="services-management.html" class="btn btn-outline btn-sm">Manage</a>
+                    </div>
+                </div>
+                <div id="serviceApplications">
+                    <p class="text-muted">Loading applications...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Overview -->
+        <div class="card mt-xl">
+            <div class="card-header">
+                <h3>System Overview</h3>
+            </div>
+            <div class="grid grid-3">
+                <div class="text-center">
+                    <div style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;">👥</div>
+                    <h4>User Management</h4>
+                    <p class="text-muted mb-md">Manage user accounts, permissions, and departments</p>
+                    <a href="user-management.html" class="btn btn-outline">Manage Users</a>
+                </div>
+                <div class="text-center">
+                    <div style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;">📦</div>
+                    <h4>Inventory Control</h4>
+                    <p class="text-muted mb-md">Track stock levels, add new items, and manage suppliers</p>
+                    <a href="inventory.html" class="btn btn-outline">View Inventory</a>
+                </div>
+                <div class="text-center">
+                    <div style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;">📊</div>
+                    <h4>Request Processing</h4>
+                    <p class="text-muted mb-md">Review, approve, and track stationery requests</p>
+                    <a href="requests.html" class="btn btn-outline">Process Requests</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card mt-xl">
+            <div class="card-header">
+                <h3>Recent Activity</h3>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Activity</th>
+                            <th>User</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentActivity">
+                        <tr>
+                            <td>2 min ago</td>
+                            <td>New request for A4 Paper</td>
+                            <td>John Doe</td>
+                            <td><span class="badge badge-warning">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>15 min ago</td>
+                            <td>Request approved for Blue Pens</td>
+                            <td>Jane Smith</td>
+                            <td><span class="badge badge-success">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td>1 hour ago</td>
+                            <td>New user registered</td>
+                            <td>Mike Johnson</td>
+                            <td><span class="badge badge-info">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>2 hours ago</td>
+                            <td>Inventory updated for Staplers</td>
+                            <td>Admin</td>
+                            <td><span class="badge badge-success">Completed</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Load admin dashboard data
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRecentRequests();
+            loadLowStockItems();
+        });
+
+        function loadRecentRequests() {
+            const container = document.getElementById('recentRequests');
+            const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+            const recentRequests = requests.slice(-5).reverse();
+
+            if (recentRequests.length === 0) {
+                container.innerHTML = '<p class="text-muted">No recent requests</p>';
+                return;
+            }
+
+            const html = recentRequests.map(request => `
+                <div class="flex-between" style="padding: 0.75rem 0; border-bottom: 1px solid var(--border);">
+                    <div>
+                        <div style="font-weight: 500;">${request.itemName}</div>
+                        <div class="text-muted" style="font-size: 0.875rem;">${request.userName} • Qty: ${request.quantity}</div>
+                    </div>
+                    <span class="badge badge-${getStatusColor(request.status)}">${request.status}</span>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
+        function loadLowStockItems() {
+            const container = document.getElementById('lowStockItems');
+            const inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
+            const lowStockItems = inventory.filter(item => item.stock <= item.minStock);
+
+            if (lowStockItems.length === 0) {
+                container.innerHTML = '<p class="text-success">All items are well stocked!</p>';
+                return;
+            }
+
+            const html = lowStockItems.map(item => `
+                <div class="flex-between" style="padding: 0.75rem 0; border-bottom: 1px solid var(--border);">
+                    <div>
+                        <div style="font-weight: 500;">${item.name}</div>
+                        <div class="text-muted" style="font-size: 0.875rem;">Current: ${item.stock} | Min: ${item.minStock}</div>
+                    </div>
+                    <span class="badge badge-error">Low Stock</span>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'approved': return 'success';
+                case 'rejected': return 'error';
+                case 'pending': return 'warning';
+                default: return 'info';
+            }
+        }
+    </script>
+</body>
+</html>

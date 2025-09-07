@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Classes - CHUGAZY STATIONERY</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="user-dashboard.html" class="nav-brand">📝 CHUGAZY STATIONERY</a>
+            <ul class="nav-menu">
+                <li><a href="user-dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="catalog.html" class="nav-link">Catalog</a></li>
+                <li><a href="#" class="nav-link" onclick="toggleServicesMenu()">Services ▼</a></li>
+                <li><a href="profile.html" class="nav-link">Profile</a></li>
+            </ul>
+            <div class="flex">
+                <span class="text-muted">Welcome, <span data-user-name>User</span></span>
+                <button data-theme-toggle class="btn btn-secondary">🌙</button>
+                <button data-logout class="btn btn-outline">Logout</button>
+            </div>
+            <div id="servicesDropdown" class="services-dropdown hidden">
+                <a href="loan-application.html">💰 Loan Application</a>
+                <a href="ajira-portal.html">💼 Job Portal</a>
+                <a href="software-installation.html">💻 Software Installation</a>
+                <a href="online-classes.html">🎓 Online Classes</a>
+                <a href="computer-shop.html">🖥️ Computer Shop</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" style="min-height: 300px;">
+        <div class="container text-center hero-content">
+            <h1 class="fade-in">🎓 Online Classes</h1>
+            <p class="fade-in">Learn new skills with expert instructors</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="grid grid-3 mb-xl">
+            <div class="card">
+                <div style="font-size: 2rem; margin-bottom: 1rem; color: var(--primary);">💻</div>
+                <h3>Web Development</h3>
+                <p class="text-muted">Learn HTML, CSS, JavaScript and modern frameworks</p>
+                <div class="flex-between">
+                    <span class="badge badge-info">12 weeks</span>
+                    <span class="badge badge-success">$299</span>
+                </div>
+                <button class="btn btn-primary mt-md">Enroll Now</button>
+            </div>
+            <div class="card">
+                <div style="font-size: 2rem; margin-bottom: 1rem; color: var(--success);">📊</div>
+                <h3>Data Analysis</h3>
+                <p class="text-muted">Master Excel, Python, and data visualization tools</p>
+                <div class="flex-between">
+                    <span class="badge badge-info">8 weeks</span>
+                    <span class="badge badge-success">$199</span>
+                </div>
+                <button class="btn btn-success mt-md">Enroll Now</button>
+            </div>
+            <div class="card">
+                <div style="font-size: 2rem; margin-bottom: 1rem; color: var(--accent);">🎨</div>
+                <h3>Digital Marketing</h3>
+                <p class="text-muted">Social media, SEO, and online advertising strategies</p>
+                <div class="flex-between">
+                    <span class="badge badge-info">10 weeks</span>
+                    <span class="badge badge-success">$249</span>
+                </div>
+                <button class="btn btn-outline mt-md">Enroll Now</button>
+            </div>
+        </div>
+
+        <div class="card mb-xl">
+            <h2>Why Choose Our Online Classes?</h2>
+            <div class="grid grid-2">
+                <div>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 0.5rem 0;">✅ Expert instructors</li>
+                        <li style="padding: 0.5rem 0;">✅ Flexible scheduling</li>
+                        <li style="padding: 0.5rem 0;">✅ Interactive sessions</li>
+                        <li style="padding: 0.5rem 0;">✅ Certificate upon completion</li>
+                    </ul>
+                </div>
+                <div>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 0.5rem 0;">✅ Lifetime access to materials</li>
+                        <li style="padding: 0.5rem 0;">✅ 1-on-1 mentorship</li>
+                        <li style="padding: 0.5rem 0;">✅ Project-based learning</li>
+                        <li style="padding: 0.5rem 0;">✅ Job placement assistance</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Enroll in a Class</h2>
+            <form>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Course</label>
+                        <select class="form-select" required>
+                            <option value="">Select Course</option>
+                            <option value="web">Web Development</option>
+                            <option value="data">Data Analysis</option>
+                            <option value="marketing">Digital Marketing</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Preferred Schedule</label>
+                        <select class="form-select" required>
+                            <option value="">Select Schedule</option>
+                            <option value="morning">Morning (9AM-12PM)</option>
+                            <option value="afternoon">Afternoon (2PM-5PM)</option>
+                            <option value="evening">Evening (6PM-9PM)</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" onclick="submitEnrollment(event)">Enroll Now</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script>
+        function toggleServicesMenu() {
+            const dropdown = document.getElementById('servicesDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('servicesDropdown');
+            const servicesLink = e.target.closest('[onclick="toggleServicesMenu()"]');
+            if (!servicesLink && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        function submitEnrollment(e) {
+            e.preventDefault();
+            if (!auth.isAuthenticated()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const form = e.target.closest('form');
+            const formData = new FormData(form);
+            const enrollment = {
+                id: Date.now().toString(),
+                userId: auth.currentUser.id,
+                userName: auth.currentUser.name,
+                userEmail: auth.currentUser.email,
+                course: formData.get('course'),
+                schedule: formData.get('schedule'),
+                status: 'pending',
+                serviceType: 'classes',
+                applicationDate: new Date().toISOString()
+            };
+
+            const serviceApps = JSON.parse(localStorage.getItem('serviceApplications') || '[]');
+            serviceApps.push(enrollment);
+            localStorage.setItem('serviceApplications', JSON.stringify(serviceApps));
+
+            alert('Course enrollment submitted successfully!');
+            form.reset();
+        }
+    </script>
+</body>
+</html>

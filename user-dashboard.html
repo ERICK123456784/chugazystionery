@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Stationery Management System</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="user-dashboard.html" class="nav-brand">📝 CHUGAZY Stationery Management System</a>
+            <ul class="nav-menu">
+                <li><a href="user-dashboard.html" class="nav-link active">Dashboard</a></li>
+                <li><a href="catalog.html" class="nav-link">Catalog</a></li>
+                <li><a href="my-services.html" class="nav-link">My Services</a></li>
+                <li><a href="#" class="nav-link" onclick="toggleServicesMenu()">Services ▼</a></li>
+                <li><a href="profile.html" class="nav-link">Profile</a></li>
+            </ul>
+            <div id="servicesDropdown" class="services-dropdown hidden">
+                <a href="loan-application.html">💰 Loan Application</a>
+                <a href="ajira-portal.html">💼 Job Portal</a>
+                <a href="software-installation.html">💻 Software Installation</a>
+                <a href="online-classes.html">🎓 Online Classes</a>
+                <a href="computer-shop.html">🖥️ Computer Shop</a>
+            </div>
+            <div class="flex">
+                <span class="text-muted">Welcome, <span data-user-name>User</span></span>
+                <button data-theme-toggle class="btn btn-secondary">🌙</button>
+                <button data-logout class="btn btn-outline">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <section class="dashboard-header">
+        <div class="container">
+            <h1>User Dashboard</h1>
+            <p class="text-muted">Manage your stationery requests and track orders</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Quick Actions -->
+        <div class="flex-between mb-xl">
+            <h2>Quick Actions</h2>
+            <button data-modal-target="requestModal" class="btn btn-primary">
+                📝 New Request
+            </button>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid mb-xl">
+            <div class="stat-card">
+                <span class="stat-number" id="totalRequests">0</span>
+                <div class="stat-label">Total Requests</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="pendingRequests">0</span>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="approvedRequests">0</span>
+                <div class="stat-label">Approved</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="rejectedRequests">0</span>
+                <div class="stat-label">Rejected</div>
+            </div>
+        </div>
+
+        <!-- Recent Requests -->
+        <div class="card">
+            <div class="card-header">
+                <div class="flex-between">
+                    <h3>Recent Requests</h3>
+                    <a href="catalog.html" class="btn btn-outline btn-sm">View All Items</a>
+                </div>
+            </div>
+            <div id="userRequests">
+                <p class="text-muted">Loading requests...</p>
+            </div>
+        </div>
+
+        <!-- All Services -->
+        <div class="card mt-xl">
+            <div class="card-header">
+                <h3>Available Services</h3>
+            </div>
+            <div class="grid grid-3">
+                <div class="card card-hover text-center">
+                    <div style="font-size: 2rem; margin-bottom: 1rem; color: var(--primary);">📋</div>
+                    <h4>Stationery Requests</h4>
+                    <p class="text-muted">Request office supplies</p>
+                    <button data-modal-target="requestModal" class="btn btn-primary btn-sm">Make Request</button>
+                </div>
+                <div class="card card-hover text-center">
+                    <div style="font-size: 2rem; margin-bottom: 1rem; color: var(--warning);">💰</div>
+                    <h4>Loan Application</h4>
+                    <p class="text-muted">Apply for business loans</p>
+                    <a href="loan-application.html" class="btn btn-warning btn-sm">Apply Now</a>
+                </div>
+                <div class="card card-hover text-center">
+                    <div style="font-size: 2rem; margin-bottom: 1rem; color: var(--error);">💼</div>
+                    <h4>Job Portal</h4>
+                    <p class="text-muted">Find career opportunities</p>
+                    <a href="ajira-portal.html" class="btn btn-error btn-sm">Browse Jobs</a>
+                </div>
+                <div class="card card-hover text-center">
+                    <div style="font-size: 2rem; margin-bottom: 1rem; color: var(--primary);">💻</div>
+                    <h4>Software Installation</h4>
+                    <p class="text-muted">Professional tech support</p>
+                    <a href="software-installation.html" class="btn btn-primary btn-sm">Get Service</a>
+                </div>
+                <div class="card card-hover text-center">
+                    <div style="font-size: 2rem; margin-bottom: 1rem; color: var(--accent);">🎓</div>
+                    <h4>Online Classes</h4>
+                    <p class="text-muted">Learn new skills online</p>
+                    <a href="online-classes.html" class="btn btn-outline btn-sm">Join Classes</a>
+                </div>
+                <div class="card card-hover text-center">
+                    <div style="font-size: 2rem; margin-bottom: 1rem; color: var(--success);">🖥️</div>
+                    <h4>Computer Shop</h4>
+                    <p class="text-muted">Buy computers & accessories</p>
+                    <a href="computer-shop.html" class="btn btn-success btn-sm">Shop Now</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Request Modal -->
+    <div id="requestModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>New Stationery Request</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="requestForm">
+                <div class="form-group">
+                    <label class="form-label">Item Name</label>
+                    <input type="text" name="itemName" class="form-input" required placeholder="Enter item name" id="modalItemName">
+                </div>
+
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select name="category" class="form-select" required id="modalCategory">
+                            <option value="">Select Category</option>
+                            <option value="Paper">Paper</option>
+                            <option value="Writing">Writing Instruments</option>
+                            <option value="Office Tools">Office Tools</option>
+                            <option value="Filing">Filing & Storage</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Art Supplies">Art Supplies</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" name="quantity" class="form-input" required min="1" value="1">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Urgency</label>
+                    <select name="urgency" class="form-select" required>
+                        <option value="low">Low - Within 30 minutes</option>
+                        <option value="low">Low - Within 2 hours</option>
+                        <option value="low">Low - Within 2 days</option>
+                        <option value="low">Low - Within 1 hours</option>
+                        <option value="medium" selected>Medium - Within 1 week</option>
+                        <option value="high">High - Within 3 days</option>
+                        <option value="urgent">Urgent - ASAP</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Description (Optional)</label>
+                    <textarea name="description" class="form-textarea" placeholder="Additional details or specifications..."></textarea>
+                </div>
+
+                <div class="flex" style="justify-content: flex-end; gap: 1rem;">
+                    <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Prefill request modal
+        function prefillRequest(itemName, category) {
+            document.getElementById('modalItemName').value = itemName;
+            document.getElementById('modalCategory').value = category;
+        }
+
+        // Toggle services dropdown
+        function toggleServicesMenu() {
+            const dropdown = document.getElementById('servicesDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('servicesDropdown');
+            const servicesLink = e.target.closest('[onclick="toggleServicesMenu()"]');
+            if (!servicesLink && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

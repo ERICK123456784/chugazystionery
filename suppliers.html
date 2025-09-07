@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suppliers Management - CHUGAZY STATIONERY</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="assets/css/mobile.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container flex-between">
+            <a href="admin-dashboard.html" class="nav-brand">📝 CHUGAZY STATIONERY Admin</a>
+            <ul class="nav-menu">
+                <li><a href="admin-dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="inventory.html" class="nav-link">Inventory</a></li>
+                <li><a href="requests.html" class="nav-link">Requests</a></li>
+                <li><a href="user-management.html" class="nav-link">Users</a></li>
+                <li><a href="services-management.html" class="nav-link">Services</a></li>
+                <li><a href="suppliers.html" class="nav-link active">Suppliers</a></li>
+            </ul>
+            <div class="flex">
+                <button data-notification-bell class="btn btn-secondary">🔔</button>
+                <button data-theme-toggle class="btn btn-secondary">🌙</button>
+                <button data-logout class="btn btn-outline">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="dashboard-header">
+        <div class="container">
+            <div class="flex-between">
+                <div>
+                    <h1>Suppliers Management</h1>
+                    <p class="text-muted">Manage suppliers and purchase orders</p>
+                </div>
+                <button data-modal-target="addSupplierModal" class="btn btn-primary">➕ Add Supplier</button>
+            </div>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="grid grid-2 mb-xl">
+            <div class="card">
+                <div class="card-header">
+                    <h3>📊 Supplier Statistics</h3>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number" id="totalSuppliers">0</span>
+                        <div class="stat-label">Total Suppliers</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="activeSuppliers">0</span>
+                        <div class="stat-label">Active Suppliers</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="totalPOs">0</span>
+                        <div class="stat-label">Purchase Orders</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="pendingPOs">0</span>
+                        <div class="stat-label">Pending Orders</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>📈 Top Suppliers</h3>
+                </div>
+                <div id="topSuppliers">
+                    <p class="text-muted">Loading suppliers...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-xl">
+            <div class="card-header">
+                <div class="flex-between">
+                    <h3>All Suppliers</h3>
+                    <div class="flex">
+                        <input type="text" id="searchSuppliers" class="form-input" placeholder="Search suppliers..." style="width: 250px;">
+                        <button class="btn btn-outline" onclick="exportSuppliers()">📊 Export</button>
+                    </div>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Supplier Name</th>
+                            <th>Contact Person</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="suppliersTableBody">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="flex-between">
+                    <h3>Purchase Orders</h3>
+                    <button data-modal-target="addPOModal" class="btn btn-success">➕ New Purchase Order</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>PO Number</th>
+                            <th>Supplier</th>
+                            <th>Items</th>
+                            <th>Total Amount</th>
+                            <th>Order Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="purchaseOrdersTableBody">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Supplier Modal -->
+    <div id="addSupplierModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Supplier</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="addSupplierForm">
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Supplier Name</label>
+                        <input type="text" name="name" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Contact Person</label>
+                        <input type="text" name="contactPerson" class="form-input" required>
+                    </div>
+                </div>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" name="phone" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select name="category" class="form-select" required>
+                        <option value="">Select Category</option>
+                        <option value="Paper">Paper Products</option>
+                        <option value="Writing">Writing Instruments</option>
+                        <option value="Office Tools">Office Tools</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Furniture">Office Furniture</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Address</label>
+                    <textarea name="address" class="form-textarea" rows="3"></textarea>
+                </div>
+                <div class="flex" style="justify-content: flex-end; gap: 1rem;">
+                    <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Supplier</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Purchase Order Modal -->
+    <div id="addPOModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>New Purchase Order</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="addPOForm">
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Supplier</label>
+                        <select name="supplierId" class="form-select" required id="supplierSelect">
+                            <option value="">Select Supplier</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Expected Delivery</label>
+                        <input type="date" name="expectedDelivery" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Items</label>
+                    <div id="poItems">
+                        <div class="po-item grid grid-3" style="gap: var(--space-sm); margin-bottom: var(--space-sm);">
+                            <input type="text" placeholder="Item name" class="form-input" name="itemName[]" required>
+                            <input type="number" placeholder="Quantity" class="form-input" name="quantity[]" required min="1">
+                            <input type="number" placeholder="Unit price" class="form-input" name="unitPrice[]" required min="0" step="0.01">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="addPOItem()">+ Add Item</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea name="notes" class="form-textarea" rows="3"></textarea>
+                </div>
+                <div class="flex" style="justify-content: flex-end; gap: 1rem;">
+                    <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                    <button type="submit" class="btn btn-success">Create Purchase Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script src="notifications.js"></script>
+    <script>
+        let suppliers = [];
+        let purchaseOrders = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSuppliers();
+            loadPurchaseOrders();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('searchSuppliers').addEventListener('input', filterSuppliers);
+            document.getElementById('addSupplierForm').addEventListener('submit', handleAddSupplier);
+            document.getElementById('addPOForm').addEventListener('submit', handleAddPO);
+        }
+
+        function loadSuppliers() {
+            suppliers = JSON.parse(localStorage.getItem('suppliers') || '[]');
+            if (suppliers.length === 0) {
+                // Initialize with sample data
+                suppliers = [
+                    {
+                        id: '1',
+                        name: 'Office Supplies Co.',
+                        contactPerson: 'John Smith',
+                        email: 'john@officesupplies.com',
+                        phone: '+1234567890',
+                        category: 'Paper',
+                        address: '123 Business St, City',
+                        status: 'active',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: '2',
+                        name: 'Tech Solutions Ltd',
+                        contactPerson: 'Jane Doe',
+                        email: 'jane@techsolutions.com',
+                        phone: '+1234567891',
+                        category: 'Technology',
+                        address: '456 Tech Ave, City',
+                        status: 'active',
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                localStorage.setItem('suppliers', JSON.stringify(suppliers));
+            }
+            renderSuppliers();
+            updateSupplierStats();
+            loadTopSuppliers();
+            populateSupplierSelect();
+        }
+
+        function loadPurchaseOrders() {
+            purchaseOrders = JSON.parse(localStorage.getItem('purchaseOrders') || '[]');
+            renderPurchaseOrders();
+        }
+
+        function renderSuppliers() {
+            const tbody = document.getElementById('suppliersTableBody');
+            tbody.innerHTML = suppliers.map(supplier => `
+                <tr>
+                    <td style="font-weight: 500;">${supplier.name}</td>
+                    <td>${supplier.contactPerson}</td>
+                    <td>${supplier.email}</td>
+                    <td>${supplier.phone}</td>
+                    <td>${supplier.category}</td>
+                    <td><span class="badge badge-${supplier.status === 'active' ? 'success' : 'error'}">${supplier.status}</span></td>
+                    <td>
+                        <div class="flex" style="gap: 0.5rem;">
+                            <button class="btn btn-sm btn-outline" onclick="editSupplier('${supplier.id}')">Edit</button>
+                            <button class="btn btn-sm btn-error" onclick="deleteSupplier('${supplier.id}')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderPurchaseOrders() {
+            const tbody = document.getElementById('purchaseOrdersTableBody');
+            tbody.innerHTML = purchaseOrders.map(po => {
+                const supplier = suppliers.find(s => s.id === po.supplierId);
+                return `
+                    <tr>
+                        <td style="font-weight: 500;">#PO${po.id.slice(-4)}</td>
+                        <td>${supplier ? supplier.name : 'Unknown'}</td>
+                        <td>${po.items.length} items</td>
+                        <td>TSh ${po.totalAmount.toLocaleString()}</td>
+                        <td>${new Date(po.orderDate).toLocaleDateString()}</td>
+                        <td><span class="badge badge-${getStatusColor(po.status)}">${po.status}</span></td>
+                        <td>
+                            <div class="flex" style="gap: 0.5rem;">
+                                <button class="btn btn-sm btn-outline" onclick="viewPO('${po.id}')">View</button>
+                                <button class="btn btn-sm btn-success" onclick="updatePOStatus('${po.id}', 'delivered')">Mark Delivered</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateSupplierStats() {
+            document.getElementById('totalSuppliers').textContent = suppliers.length;
+            document.getElementById('activeSuppliers').textContent = suppliers.filter(s => s.status === 'active').length;
+            document.getElementById('totalPOs').textContent = purchaseOrders.length;
+            document.getElementById('pendingPOs').textContent = purchaseOrders.filter(po => po.status === 'pending').length;
+        }
+
+        function loadTopSuppliers() {
+            const container = document.getElementById('topSuppliers');
+            const topSuppliers = suppliers.slice(0, 5);
+            
+            if (topSuppliers.length === 0) {
+                container.innerHTML = '<p class="text-muted">No suppliers found</p>';
+                return;
+            }
+
+            container.innerHTML = topSuppliers.map(supplier => `
+                <div class="flex-between" style="padding: 0.75rem 0; border-bottom: 1px solid var(--border);">
+                    <div>
+                        <div style="font-weight: 500;">${supplier.name}</div>
+                        <div class="text-muted" style="font-size: 0.875rem;">${supplier.category}</div>
+                    </div>
+                    <span class="badge badge-${supplier.status === 'active' ? 'success' : 'error'}">${supplier.status}</span>
+                </div>
+            `).join('');
+        }
+
+        function populateSupplierSelect() {
+            const select = document.getElementById('supplierSelect');
+            select.innerHTML = '<option value="">Select Supplier</option>' + 
+                suppliers.filter(s => s.status === 'active').map(supplier => 
+                    `<option value="${supplier.id}">${supplier.name}</option>`
+                ).join('');
+        }
+
+        function handleAddSupplier(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            const newSupplier = {
+                id: Date.now().toString(),
+                name: formData.get('name'),
+                contactPerson: formData.get('contactPerson'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                category: formData.get('category'),
+                address: formData.get('address'),
+                status: 'active',
+                createdAt: new Date().toISOString()
+            };
+
+            suppliers.push(newSupplier);
+            localStorage.setItem('suppliers', JSON.stringify(suppliers));
+            
+            renderSuppliers();
+            updateSupplierStats();
+            loadTopSuppliers();
+            populateSupplierSelect();
+            
+            e.target.reset();
+            document.querySelector('.modal.active').classList.remove('active');
+            
+            notificationManager.addNotification('Supplier Added', `${newSupplier.name} has been added successfully`, 'success');
+        }
+
+        function handleAddPO(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            const items = [];
+            const itemNames = formData.getAll('itemName[]');
+            const quantities = formData.getAll('quantity[]');
+            const unitPrices = formData.getAll('unitPrice[]');
+            
+            for (let i = 0; i < itemNames.length; i++) {
+                if (itemNames[i]) {
+                    items.push({
+                        name: itemNames[i],
+                        quantity: parseInt(quantities[i]),
+                        unitPrice: parseFloat(unitPrices[i]),
+                        totalPrice: parseInt(quantities[i]) * parseFloat(unitPrices[i])
+                    });
+                }
+            }
+            
+            const totalAmount = items.reduce((sum, item) => sum + item.totalPrice, 0);
+            
+            const newPO = {
+                id: Date.now().toString(),
+                supplierId: formData.get('supplierId'),
+                items: items,
+                totalAmount: totalAmount,
+                expectedDelivery: formData.get('expectedDelivery'),
+                notes: formData.get('notes'),
+                status: 'pending',
+                orderDate: new Date().toISOString()
+            };
+
+            purchaseOrders.push(newPO);
+            localStorage.setItem('purchaseOrders', JSON.stringify(purchaseOrders));
+            
+            renderPurchaseOrders();
+            updateSupplierStats();
+            
+            e.target.reset();
+            document.getElementById('poItems').innerHTML = `
+                <div class="po-item grid grid-3" style="gap: var(--space-sm); margin-bottom: var(--space-sm);">
+                    <input type="text" placeholder="Item name" class="form-input" name="itemName[]" required>
+                    <input type="number" placeholder="Quantity" class="form-input" name="quantity[]" required min="1">
+                    <input type="number" placeholder="Unit price" class="form-input" name="unitPrice[]" required min="0" step="0.01">
+                </div>
+            `;
+            document.querySelector('.modal.active').classList.remove('active');
+            
+            notificationManager.addNotification('Purchase Order Created', `PO #${newPO.id.slice(-4)} has been created`, 'success');
+        }
+
+        function addPOItem() {
+            const container = document.getElementById('poItems');
+            const newItem = document.createElement('div');
+            newItem.className = 'po-item grid grid-3';
+            newItem.style.cssText = 'gap: var(--space-sm); margin-bottom: var(--space-sm);';
+            newItem.innerHTML = `
+                <input type="text" placeholder="Item name" class="form-input" name="itemName[]" required>
+                <input type="number" placeholder="Quantity" class="form-input" name="quantity[]" required min="1">
+                <input type="number" placeholder="Unit price" class="form-input" name="unitPrice[]" required min="0" step="0.01">
+            `;
+            container.appendChild(newItem);
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'delivered': return 'success';
+                case 'pending': return 'warning';
+                case 'cancelled': return 'error';
+                default: return 'info';
+            }
+        }
+
+        function filterSuppliers() {
+            const search = document.getElementById('searchSuppliers').value.toLowerCase();
+            const filtered = suppliers.filter(supplier => 
+                supplier.name.toLowerCase().includes(search) ||
+                supplier.contactPerson.toLowerCase().includes(search) ||
+                supplier.category.toLowerCase().includes(search)
+            );
+            
+            const tbody = document.getElementById('suppliersTableBody');
+            tbody.innerHTML = filtered.map(supplier => `
+                <tr>
+                    <td style="font-weight: 500;">${supplier.name}</td>
+                    <td>${supplier.contactPerson}</td>
+                    <td>${supplier.email}</td>
+                    <td>${supplier.phone}</td>
+                    <td>${supplier.category}</td>
+                    <td><span class="badge badge-${supplier.status === 'active' ? 'success' : 'error'}">${supplier.status}</span></td>
+                    <td>
+                        <div class="flex" style="gap: 0.5rem;">
+                            <button class="btn btn-sm btn-outline" onclick="editSupplier('${supplier.id}')">Edit</button>
+                            <button class="btn btn-sm btn-error" onclick="deleteSupplier('${supplier.id}')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function exportSuppliers() {
+            const csv = [
+                ['Name', 'Contact Person', 'Email', 'Phone', 'Category', 'Status'],
+                ...suppliers.map(supplier => [
+                    supplier.name,
+                    supplier.contactPerson,
+                    supplier.email,
+                    supplier.phone,
+                    supplier.category,
+                    supplier.status
+                ])
+            ].map(row => row.join(',')).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'suppliers.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function updatePOStatus(id, status) {
+            const poIndex = purchaseOrders.findIndex(po => po.id === id);
+            if (poIndex !== -1) {
+                purchaseOrders[poIndex].status = status;
+                localStorage.setItem('purchaseOrders', JSON.stringify(purchaseOrders));
+                renderPurchaseOrders();
+                updateSupplierStats();
+                
+                notificationManager.addNotification('Purchase Order Updated', `PO status updated to ${status}`, 'info');
+            }
+        }
+    </script>
+</body>
+</html>
